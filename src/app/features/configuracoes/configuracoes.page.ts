@@ -13,6 +13,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfiguracoesService } from './configuracoes.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { PageHeaderComponent } from '../../shared/page-header/page-header.component';
 import { Tables } from '../../core/types/database.types';
 
 const CICLO_PROXIMO_STATUS: Record<string, string | null> = {
@@ -49,10 +50,13 @@ function toIsoDate(value: Date): string {
     MatSlideToggleModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    PageHeaderComponent,
   ],
   template: `
-    <h1>Configurações</h1>
+    <div class="page-shell">
+    <app-page-header title="Configurações" subtitle="Categorias, contas, formas de pagamento, ciclos e usuários." />
 
+    <div class="surface-card">
     <mat-tab-group>
       <mat-tab label="Categorias">
         <div class="tab-content">
@@ -335,6 +339,8 @@ function toIsoDate(value: Date): string {
         </div>
       </mat-tab>
     </mat-tab-group>
+    </div>
+    </div>
   `,
   styles: `
     .tab-content {
