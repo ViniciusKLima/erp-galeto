@@ -11,4 +11,4 @@ Este diretório documenta o que já foi implementado e o que falta, complementan
 
 ## Estado atual em uma frase
 
-Banco de dados completo para todo o escopo de `contexto-projeto.md` (financeiro, ciclo semanal, estoque informacional, dívidas) já está no ar no Supabase, com RLS e regras críticas aplicadas; o Angular tem autenticação, dashboard e o módulo de Movimentações funcionando ponta a ponta; os demais módulos (Configurações, Estoque, Dívidas, Relatórios, Contas a Pagar/Receber como telas dedicadas) ainda são só placeholders ou não têm tela.
+Banco de dados completo para todo o escopo de `contexto-projeto.md` (financeiro, ciclo semanal, estoque informacional, dívidas) está no ar no Supabase, com RLS e regras críticas aplicadas; o Angular tem todos os módulos do escopo inicial funcionando ponta a ponta (autenticação, dashboard com ciclo atual, movimentações completas, contas a pagar/receber, configurações, estoque, dívidas e relatórios) — ver `roadmap.md` para o detalhe do que é refino pendente em cada um.

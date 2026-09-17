@@ -21,12 +21,11 @@ src/app/features/movimentacoes/
 - Liquidar (botão "Liquidar" em item pendente não parcelado): abre diálogo pedindo valor, data e conta financeira — aceita valor menor que o total pendente (liquidação parcial, ex.: venda fiada).
 - Dashboard: cards de receita/despesa/resultado do mês, saldo por conta, total a pagar/receber.
 
-## O que este módulo ainda não faz (ficou fora do primeiro corte)
+## Atualização — lacunas fechadas
 
-- Liquidar uma **parcela individual** pela tela (o dialog de liquidação só foi ligado à movimentação simples na lista; a função `registrarLiquidacao` já aceita `installmentId`, falta o botão/tela para abrir a lista de parcelas de uma movimentação parcelada e liquidar uma a uma).
-- Cancelar movimentação pela UI (a função `cancelar_movimentacao` existe e está no service, falta o botão + diálogo pedindo o motivo).
-- Filtros na listagem (período, tipo, status, categoria, ciclo) — `movimentacoes.service.ts.listar()` já aceita um `MovimentacaoFiltro`, falta a UI de filtro na página.
-- Edição de uma movimentação pendente.
-- Paginação/ordenação da tabela (`ux-ui.md` pede busca/filtro/ordenação/paginação em tabelas — hoje carrega tudo de uma vez, aceitável para o volume inicial de uma galeteria, mas vai precisar antes de crescer muito).
+Liquidação de parcela individual (`parcelas.dialog.ts`), cancelamento pela UI (`cancelar-movimentacao.dialog.ts`), filtro por tipo/status/período e edição de movimentação simples pendente (`movimentacao-form.dialog.ts` agora aceita um registro existente) já estão implementados.
 
-Essas lacunas são candidatas naturais para a próxima sessão de trabalho neste módulo antes de replicar o padrão para os outros.
+## O que ainda falta (menor prioridade)
+
+- Filtro por categoria e por ciclo na listagem (o service já aceita via `MovimentacaoFiltro`, falta o campo no formulário).
+- Paginação/ordenação da tabela — hoje carrega tudo de uma vez, aceitável para o volume inicial de uma galeteria, mas vai precisar antes de crescer muito.

@@ -1,38 +1,41 @@
-# Roadmap — o que falta construir
+# Roadmap — status dos módulos
 
-Ordem sugerida, seguindo o princípio de `prompt-mestre-claude.md` ("construir por módulos, mantendo o sistema funcional"). O banco de dados já suporta todos os itens abaixo — o que falta é majoritariamente tela Angular.
+Todos os módulos do escopo inicial (`contexto-projeto.md`) têm uma versão funcional implementada. O que resta agora é refino, não construção do zero.
 
-## 1. Fechar o módulo de Movimentações
-Ver lacunas detalhadas em `modulo-movimentacoes.md`: liquidação por parcela individual, cancelamento pela UI, filtros, edição.
+## ✅ Autenticação
+Login/logout via Supabase Auth, guard de rota, guard de admin.
 
-## 2. Configurações — ✅ feito (categorias/subcategorias/contas/formas/ciclos)
-Tela de admin com abas para:
-- Categorias e subcategorias (criar + ativar/desativar, não apaga fisicamente — `categorias-contas-configuracoes.md`).
-- Contas financeiras (criar + ativar/desativar; saldo inicial editável na criação; saldo atual continua vindo só de `v_saldo_contas`, não é editável direto).
-- Formas de pagamento (criar + ativar/desativar).
-- Ciclos: criar (label, início, fim) e avançar status (`aberto` → `em_andamento` → `fechamento` → `fechado`).
+## ✅ Dashboard
+Cards do mês (receita, despesa, resultado, a pagar, a receber), saldo por conta, e cards do **ciclo semanal atual** (vendas, despesas, resultado do ciclo aberto/em andamento mais recente).
 
-Ainda falta nesta tela:
-- Editar nome/tipo de um item já criado (hoje só cria e ativa/desativa).
-- Usuários (`profiles`): ativar/desativar, promover a admin — continua só via SQL direto no Supabase.
-- Editar saldo inicial de uma conta depois de criada.
+## ✅ Movimentações
+Criar (simples ou parcelada), listar com filtros (tipo, status, período), editar (simples e pendente), cancelar (com motivo, preserva histórico), liquidar total ou parcial — inclusive parcela por parcela numa movimentação parcelada.
 
-## 3. Contas a Pagar / Contas a Receber (telas dedicadas)
-As views `v_contas_a_pagar` e `v_contas_a_receber` já existem e já agregam simples + parcelas com saldo pendente. Falta uma tela que liste isso por vencimento, com o botão de liquidar direto (reaproveita `liquidacao-form.dialog.ts`).
+Pendências menores, não bloqueantes:
+- Filtro por categoria e por ciclo na listagem (o service já aceita, falta o campo no formulário de filtro).
+- Paginação da tabela — hoje carrega tudo de uma vez; ok para o volume atual de uma galeteria, mas vai precisar de paginação/lazy loading se o histórico crescer muito (muitos meses de operação).
 
-## 4. Estoque e Insumos
-CRUD de `inventory_items` (primeira versão informacional, conforme `estoque.md` e `contexto-negocio-galeteria-claude.md` §16). Sem vínculo automático com movimentações ainda — isso é evolução futura documentada no próprio schema.
+## ✅ Contas a Pagar / Contas a Receber
+Telas dedicadas, listam simples + parcelas com saldo pendente, ação de liquidar direto na linha.
 
-## 5. Dívidas e Credores
-CRUD de `debts` + `debt_installments`, seguindo `dividas-e-credores.md`. Cuidado documentado em `banco-de-dados.md`: não duplicar uma obrigação que já está representada como `financial_transactions` parcelada — usar `debts` só para dívidas que não nasceram de uma movimentação normal do sistema.
+## ✅ Configurações
+Categorias, subcategorias, contas financeiras, formas de pagamento (criar + ativar/desativar) e ciclos (criar + avançar status).
 
-## 6. Relatórios
-`relatorios.md` pede seleção de período/filtros, agrupamento, apresentação, exportação futura. As views de dashboard já dão a base; falta a camada de agrupamento por ciclo/categoria/forma de pagamento na tela e, mais adiante, exportação (CSV é o caminho mais simples e gratuito).
+Pendências menores:
+- Editar nome/tipo de um item já existente (hoje só cria e ativa/desativa).
+- Gestão de usuários (ativar/desativar, promover a admin) continua só via SQL direto no Supabase — é a única parte do sistema que ainda não tem tela.
 
-## 7. Dashboard — próximas métricas
-Hoje o dashboard mostra receita/despesa/resultado do mês, saldo por conta e totais a pagar/receber. `dashboard-e-metricas.md` e `contexto-negocio-galeteria-claude.md` §18 sugerem, em ordem de valor prático: faturamento por ciclo, despesas por ciclo, resultado por ciclo, evolução mensal, despesas/receitas por categoria. Todas dão para construir em cima de `v_resultado_periodo`/`v_fluxo_caixa` agrupando por `cycle_id` ou `category_id` — não precisa de nova tabela.
+## ✅ Estoque e Insumos
+Cadastro informacional (compra, consumo, rendimento, fornecedor, valor de venda), ativar/desativar item.
+
+## ✅ Dívidas e Credores
+Registro de dívida parcelada (função atômica no banco, mesmo padrão de movimentações), pagamento por parcela, dívida marcada como quitada automaticamente quando todas as parcelas são pagas.
+
+## ✅ Relatórios
+Período configurável, agrupamento por categoria, forma de pagamento e ciclo — base de competência (`transaction_date`, exclui cancelado), consistente com `v_resultado_periodo`.
 
 ## Fora de escopo por enquanto (documentado, não esquecido)
-- Custo/margem por produto (depende de estoque real, não só informacional) — `regras-financeiras.md` §20 e §19 do contexto de negócio.
-- Multi-empresa/múltiplas unidades — nada no schema hoje impede evoluir para isso, mas não foi modelado.
-- App mobile nativo — `ux-ui.md` já pede responsividade na web, que o Angular Material cobre; não há necessidade identificada de app nativo.
+- Custo/margem por produto (depende de estoque real com baixa automática, não só informacional) — `regras-financeiras.md` §20.
+- Multi-empresa/múltiplas unidades — nada no schema impede evoluir para isso, mas não foi modelado.
+- Exportação de relatórios (CSV/PDF) — próximo passo natural do módulo de Relatórios quando fizer sentido.
+- Onboarding de novos usuários pela própria aplicação (hoje é 100% manual via Supabase Dashboard).

@@ -38,7 +38,13 @@ Todo usuário novo nasce como `operador` (trigger `handle_new_user`). Não criei
 
 **Ação necessária de você**: crie sua conta pela tela de login do sistema (ela vai falhar até você existir — use o Supabase Dashboard → Authentication → Users → "Add user" com seu e-mail e uma senha, por enquanto, já que ainda não construí uma tela de "esqueci minha senha"/onboarding). Depois disso, é só rodar uma linha de SQL (`update profiles set role = 'admin' where id = '<seu-user-id>'`) — posso fazer essa parte assim que você tiver a conta criada e me passar o e-mail.
 
-## 7. Site publicado, mas atrás de login do Vercel (preciso da sua ação)
+## 7. Pagamento de dívida não mexe no saldo da conta automaticamente
+
+O módulo Dívidas e Credores é uma trilha separada, informacional (como já era no `banco-de-dados.md`: "não duplicar uma obrigação financeira em módulos independentes"). Quando você marca uma parcela de dívida como paga, isso só atualiza o status da dívida — **não** debita a conta financeira nem aparece no fluxo de caixa/saldo do dashboard. Se o pagamento realmente saiu do caixa, é preciso lançar também como uma despesa normal em Movimentações.
+
+**Preciso saber de você**: isso é aceitável (dívida = controle à parte, sem duplicar o lançamento financeiro), ou você esperava que pagar uma dívida já debitasse a conta automaticamente? Se for o segundo caso, dá pra unificar — mas aí some a separação que `banco-de-dados.md` pede entre os dois módulos.
+
+## 8. Site publicado, mas atrás de login do Vercel (preciso da sua ação)
 
 O deploy no Vercel funcionou, mas o projeto nasceu com "Vercel Authentication" (proteção padrão de novos projetos) ativada — qualquer visita redireciona para um login do Vercel antes de chegar no app. A conexão que uso para gerenciar sua conta Vercel não tem permissão para ler/alterar essa configuração (erro 403 pedindo reautenticação de escopo), então não consigo desligar isso sozinho.
 

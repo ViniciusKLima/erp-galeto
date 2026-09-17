@@ -76,8 +76,10 @@ Detalhe completo em `.claude/supabase-e-seguranca.md`.
 | `registrar_liquidacao(...)` | Registra um pagamento/recebimento (total ou parcial) contra uma movimentação simples ou uma parcela específica. |
 | `cancelar_movimentacao(...)` | Cancela preservando o que já foi liquidado; exige motivo; operador só cancela o que criou e ainda não recebeu nada. |
 | `is_admin()` / `is_active_user()` | Helpers de autorização, também usáveis pelo front para lógica de UI (não são a autoridade — RLS é). |
+| `criar_divida_parcelada(...)` | Mesmo padrão de `criar_movimentacao_parcelada`, mas para `debts` + `debt_installments`. |
+| `registrar_pagamento_divida(...)` | Marca uma parcela de dívida como paga; quita a dívida automaticamente quando não sobra nenhuma parcela pendente. Só suporta pagamento integral por parcela (sem liquidação parcial como em `transaction_settlements` — dívidas são uma trilha informacional separada, não afetam `v_saldo_contas`/fluxo de caixa diretamente; um pagamento de dívida que afeta o caixa real deve também ser lançado como uma despesa normal em Movimentações). |
 
-Uma movimentação **simples** (não parcelada) é criada com `INSERT` direto do Angular (permitido por RLS) — não precisa de função, porque é uma operação de uma tabela só.
+Uma movimentação **simples** (não parcelada) é criada com `INSERT` direto do Angular (permitido por RLS) — não precisa de função, porque é uma operação de uma tabela só. Edição de uma movimentação simples pendente também é `UPDATE` direto (RLS já restringe a quem criou e ainda está pendente, ou admin).
 
 ## Views para dashboard e relatórios
 
