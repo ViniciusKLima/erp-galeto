@@ -12,7 +12,6 @@ Cards do mês (receita, despesa, resultado, a pagar, a receber), saldo por conta
 Criar (simples ou parcelada), listar com filtros (tipo, status, período), editar (simples e pendente), cancelar (com motivo, preserva histórico), liquidar total ou parcial — inclusive parcela por parcela numa movimentação parcelada.
 
 Pendências menores, não bloqueantes:
-- Filtro por categoria e por ciclo na listagem (o service já aceita, falta o campo no formulário de filtro).
 - Paginação da tabela — hoje carrega tudo de uma vez; ok para o volume atual de uma galeteria, mas vai precisar de paginação/lazy loading se o histórico crescer muito (muitos meses de operação).
 
 ## ✅ Contas a Pagar / Contas a Receber

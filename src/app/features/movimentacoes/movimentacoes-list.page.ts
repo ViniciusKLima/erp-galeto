@@ -92,6 +92,26 @@ function toIsoDate(value: Date | null): string | undefined {
         <mat-datepicker #pickerAte />
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label>Categoria</mat-label>
+        <mat-select formControlName="categoriaId">
+          <mat-option [value]="null">Todas</mat-option>
+          @for (categoria of categorias(); track categoria.id) {
+            <mat-option [value]="categoria.id">{{ categoria.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ciclo</mat-label>
+        <mat-select formControlName="cicloId">
+          <mat-option [value]="null">Todos</mat-option>
+          @for (ciclo of ciclos(); track ciclo.id) {
+            <mat-option [value]="ciclo.id">{{ ciclo.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
       <button mat-stroked-button type="submit">Filtrar</button>
       <button mat-button type="button" (click)="limparFiltro()">Limpar</button>
     </form>
@@ -202,6 +222,8 @@ export class MovimentacoesListPage implements OnInit {
 
   readonly loading = signal(true);
   readonly movimentacoes = signal<Tables<'financial_transactions'>[]>([]);
+  readonly categorias = signal<Tables<'transaction_categories'>[]>([]);
+  readonly ciclos = signal<Tables<'cycles'>[]>([]);
   readonly colunas = ['data', 'descricao', 'tipo', 'valor', 'pago', 'status', 'acoes'];
 
   readonly filtroForm = this.fb.group({
@@ -209,9 +231,17 @@ export class MovimentacoesListPage implements OnInit {
     status: this.fb.control<string | null>(null),
     dataInicio: this.fb.control<Date | null>(null),
     dataFim: this.fb.control<Date | null>(null),
+    categoriaId: this.fb.control<string | null>(null),
+    cicloId: this.fb.control<string | null>(null),
   });
 
   async ngOnInit(): Promise<void> {
+    const [categorias, ciclos] = await Promise.all([
+      this.service.listarCategorias(),
+      this.service.listarCiclos(),
+    ]);
+    this.categorias.set(categorias);
+    this.ciclos.set(ciclos);
     await this.carregar();
   }
 
@@ -224,6 +254,8 @@ export class MovimentacoesListPage implements OnInit {
         status: valores.status ?? undefined,
         dataInicio: toIsoDate(valores.dataInicio),
         dataFim: toIsoDate(valores.dataFim),
+        categoriaId: valores.categoriaId ?? undefined,
+        cicloId: valores.cicloId ?? undefined,
       }),
     );
     this.loading.set(false);
@@ -234,7 +266,14 @@ export class MovimentacoesListPage implements OnInit {
   }
 
   async limparFiltro(): Promise<void> {
-    this.filtroForm.reset({ tipo: null, status: null, dataInicio: null, dataFim: null });
+    this.filtroForm.reset({
+      tipo: null,
+      status: null,
+      dataInicio: null,
+      dataFim: null,
+      categoriaId: null,
+      cicloId: null,
+    });
     await this.carregar();
   }
 
