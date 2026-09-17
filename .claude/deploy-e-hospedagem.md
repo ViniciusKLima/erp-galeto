@@ -15,6 +15,8 @@ Manter o sistema no ar sem custo, com deploy simples e reprodutível, conforme d
   ```
 - Variáveis de ambiente do Angular (URL do projeto Supabase e `anon key`) ficam em `src/environments/environment.ts` (dev) e `environment.prod.ts` (prod), lidas em build time. Não versionar nenhum segredo — a `anon key` não é segredo, mas manter o padrão de não hardcodear em múltiplos arquivos.
 - Plano gratuito do Vercel é suficiente para um site estático de uso interno; não há necessidade de plano pago enquanto o tráfego for baixo.
+- **Git conectado ao Vercel é o único caminho de deploy confiável para este projeto.** Upload manual de arquivos (deploy direto sem repositório) se mostrou instável para um app com dezenas de arquivos — payloads grandes acabam incompletos sem erro visível. Não usar esse caminho como método principal; ver `docs/spec/decisoes-abertas.md` item 8 para o histórico.
+- Novo projeto Vercel nasce com "Vercel Authentication" (Deployment Protection) ativada por padrão — se o site precisa ser público, desativar em Settings → Deployment Protection logo após criar o projeto.
 
 ## Backend (Supabase)
 

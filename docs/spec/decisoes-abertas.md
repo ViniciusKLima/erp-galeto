@@ -44,8 +44,18 @@ O módulo Dívidas e Credores é uma trilha separada, informacional (como já er
 
 **Preciso saber de você**: isso é aceitável (dívida = controle à parte, sem duplicar o lançamento financeiro), ou você esperava que pagar uma dívida já debitasse a conta automaticamente? Se for o segundo caso, dá pra unificar — mas aí some a separação que `banco-de-dados.md` pede entre os dois módulos.
 
-## 8. Site publicado, mas atrás de login do Vercel (preciso da sua ação)
+## 8. Deploy manual no Vercel não é confiável para este projeto — preciso que você conecte o GitHub
 
-O deploy no Vercel funcionou, mas o projeto nasceu com "Vercel Authentication" (proteção padrão de novos projetos) ativada — qualquer visita redireciona para um login do Vercel antes de chegar no app. A conexão que uso para gerenciar sua conta Vercel não tem permissão para ler/alterar essa configuração (erro 403 pedindo reautenticação de escopo), então não consigo desligar isso sozinho.
+Duas coisas travando o deploy, uma técnica e uma de permissão:
 
-**Ação necessária de você**: vercel.com → projeto `erp-galeto` → Settings → Deployment Protection → desativar "Vercel Authentication" (ou restringir só a preview deployments, deixando produção pública). Depois disso o site fica acessível para qualquer pessoa da equipe da galeteria, sem precisar de conta no Vercel.
+**a) Proteção do Vercel.** O projeto nasceu com "Vercel Authentication" ativada (padrão em projetos novos) — qualquer visita redireciona para login do Vercel antes de chegar no app. A conexão que uso para sua conta Vercel não tem permissão para ler/alterar essa configuração (erro 403 pedindo reautenticação de escopo), não consigo desligar isso sozinho.
+
+**b) O upload manual de arquivos (`deploy_to_vercel`) não é confiável para um projeto deste tamanho.** Tentei consolidar os ~41 arquivos do projeto numa única chamada de deploy repetidas vezes (9 tentativas) e, mesmo tentando deliberadamente incluir tudo, cada chamada acabou levando só um subconjunto dos arquivos — sem nenhum erro ou aviso de que faltava algo. Reportei isso como um problema da ferramenta. Na prática, isso significa que os deploys de produção feitos nesta sessão provavelmente estão com módulos faltando (o app pode não abrir, ou abrir só parcialmente) — **mesmo depois de destravar a proteção do item (a), o site publicado agora não deve ser considerado confiável.**
+
+**Ação necessária de você (única forma robusta de resolver isso):**
+1. Criar um repositório vazio no GitHub (github.com → New repository), sem inicializar com README.
+2. Me passar a URL do repositório (ou rodar você mesmo: `git remote add origin <url> && git push -u origin main` dentro de `D:\ERP-Galeto`, que já é um repositório git local com todo o histórico de commits).
+3. Depois disso eu conecto esse repositório ao projeto Vercel (`create_git_project`) — daí o Vercel builda direto do código-fonte completo a cada push, sem o problema de upload manual.
+4. Desativar a proteção do Vercel conforme o item (a) acima.
+
+Até isso acontecer, o código-fonte correto e completo está garantido no histórico do git local (`git log`) — já validei repetidamente com `ng build` local, sempre sem erros.
