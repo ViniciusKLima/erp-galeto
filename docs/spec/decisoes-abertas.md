@@ -44,18 +44,18 @@ O módulo Dívidas e Credores é uma trilha separada, informacional (como já er
 
 **Preciso saber de você**: isso é aceitável (dívida = controle à parte, sem duplicar o lançamento financeiro), ou você esperava que pagar uma dívida já debitasse a conta automaticamente? Se for o segundo caso, dá pra unificar — mas aí some a separação que `banco-de-dados.md` pede entre os dois módulos.
 
-## 8. Deploy manual no Vercel não é confiável para este projeto — preciso que você conecte o GitHub
+## 8. Redesign visual (`.claude/reestrutura-visual.md`): duas simplificações conscientes
 
-Duas coisas travando o deploy, uma técnica e uma de permissão:
+Segui o documento de redesign quase à risca, mas duas peças do seu mock não bateram 1:1 com o modelo de dados real, e tomei uma decisão em cada uma:
 
-**a) Proteção do Vercel.** O projeto nasceu com "Vercel Authentication" ativada (padrão em projetos novos) — qualquer visita redireciona para login do Vercel antes de chegar no app. A conexão que uso para sua conta Vercel não tem permissão para ler/alterar essa configuração (erro 403 pedindo reautenticação de escopo), não consigo desligar isso sozinho.
+**Filtro "Conta" no Dashboard**: no schema atual, uma movimentação (receita/despesa) não pertence a uma conta financeira até ser liquidada — quem carrega `financial_account_id` é o evento de liquidação, não a movimentação. Então o filtro "Conta" no Dashboard só afeta os cartões de **Saldo disponível** e **Fluxo de caixa** (que são baseados em liquidações reais); não filtra Receita/Despesas/Resultado (que são por competência, sem conta associada). Isso é consistente com o modelo, mas pode não ser o que você esperava visualmente ao selecionar uma conta.
 
-**b) O upload manual de arquivos (`deploy_to_vercel`) não é confiável para um projeto deste tamanho.** Tentei consolidar os ~41 arquivos do projeto numa única chamada de deploy repetidas vezes (9 tentativas) e, mesmo tentando deliberadamente incluir tudo, cada chamada acabou levando só um subconjunto dos arquivos — sem nenhum erro ou aviso de que faltava algo. Reportei isso como um problema da ferramenta. Na prática, isso significa que os deploys de produção feitos nesta sessão provavelmente estão com módulos faltando (o app pode não abrir, ou abrir só parcialmente) — **mesmo depois de destravar a proteção do item (a), o site publicado agora não deve ser considerado confiável.**
+**Transferências no modal "Nova movimentação"**: implementei a criação de transferência dentro do modal unificado, como pedido. Mas transferências não aparecem na tabela principal de Movimentações (que é só receita/despesa) — coloquei uma mini-lista "Últimas transferências entre contas" abaixo da tabela. Se você preferir transferências misturadas na mesma tabela cronológica, é uma mudança de estrutura de dados (unificar os dois conceitos), não só visual — avise se quiser isso.
 
-**Ação necessária de você (única forma robusta de resolver isso):**
-1. Criar um repositório vazio no GitHub (github.com → New repository), sem inicializar com README.
-2. Me passar a URL do repositório (ou rodar você mesmo: `git remote add origin <url> && git push -u origin main` dentro de `D:\ERP-Galeto`, que já é um repositório git local com todo o histórico de commits).
-3. Depois disso eu conecto esse repositório ao projeto Vercel (`create_git_project`) — daí o Vercel builda direto do código-fonte completo a cada push, sem o problema de upload manual.
-4. Desativar a proteção do Vercel conforme o item (a) acima.
+## 9. Configurações: os formulários "Adicionar" ainda são inline, não modais
 
-Até isso acontecer, o código-fonte correto e completo está garantido no histórico do git local (`git log`) — já validei repetidamente com `ng build` local, sempre sem erros.
+A regra global do redesign ("todo botão Adicionar/Novo abre modal") foi aplicada em Movimentações, Dívidas e Estoque. Em Configurações, os 5 formulários (categorias, subcategorias, contas, formas de pagamento, ciclos) continuam como painéis expansíveis inline — não converti para modal ainda porque essa era a etapa de menor prioridade no seu próprio documento (etapa 7 de 7) e o tempo da sessão acabou. Funcionalmente está tudo certo, é só uma inconsistência visual menor que fica de próximo passo.
+
+## 10. Deploy — resolvido: GitHub conectado ao Vercel
+
+**Status:** resolvido. O deploy manual de arquivo por arquivo (`deploy_to_vercel`) não era confiável para um projeto deste tamanho — tentei consolidar os ~41 arquivos numa única chamada repetidas vezes e cada tentativa acabava levando só um subconjunto, sem aviso de erro (reportei isso como problema da ferramenta). A solução foi conectar o repositório GitHub (`ViniciusKLima/erp-galeto`) diretamente ao projeto Vercel — agora cada `git push` faz o Vercel buildar do código-fonte completo, sem o problema de upload parcial. Confirmado funcionando: `https://galetodofofao.vercel.app` responde com o app completo, refletindo o último commit.
