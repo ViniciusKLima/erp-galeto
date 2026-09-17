@@ -48,6 +48,10 @@ import { AuthService } from '../core/auth/auth.service';
             <mat-icon matListItemIcon>account_balance</mat-icon>
             <span matListItemTitle>Dívidas e credores</span>
           </a>
+          <a mat-list-item routerLink="/relatorios" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>bar_chart</mat-icon>
+            <span matListItemTitle>Relatórios</span>
+          </a>
           @if (auth.isAdmin()) {
             <a mat-list-item routerLink="/configuracoes" routerLinkActive="active-link">
               <mat-icon matListItemIcon>settings</mat-icon>

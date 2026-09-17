@@ -66,6 +66,34 @@ import { Tables } from '../../core/types/database.types';
           </mat-card>
         }
       </div>
+
+      @if (cicloAtual(); as ciclo) {
+        <h2>Ciclo atual — {{ ciclo.label }}</h2>
+        <div class="cards-grid">
+          <mat-card>
+            <mat-card-content>
+              <p class="label">Vendas do ciclo</p>
+              <p class="valor positivo">{{ receitaCiclo() | currency: 'BRL' }}</p>
+            </mat-card-content>
+          </mat-card>
+          <mat-card>
+            <mat-card-content>
+              <p class="label">Despesas do ciclo</p>
+              <p class="valor negativo">{{ despesaCiclo() | currency: 'BRL' }}</p>
+            </mat-card-content>
+          </mat-card>
+          <mat-card>
+            <mat-card-content>
+              <p class="label">Resultado do ciclo</p>
+              <p class="valor" [class.positivo]="resultadoCiclo() >= 0" [class.negativo]="resultadoCiclo() < 0">
+                {{ resultadoCiclo() | currency: 'BRL' }}
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      } @else {
+        <p class="periodo">Nenhum ciclo semanal cadastrado ainda (crie um em Configurações → Ciclos).</p>
+      }
     }
   `,
   styles: `
@@ -105,6 +133,8 @@ export class DashboardPage implements OnInit {
   readonly resultadoPeriodo = signal<Tables<'v_resultado_periodo'>[]>([]);
   readonly contasAPagar = signal<Tables<'v_contas_a_pagar'>[]>([]);
   readonly contasAReceber = signal<Tables<'v_contas_a_receber'>[]>([]);
+  readonly cicloAtual = signal<Tables<'cycles'> | null>(null);
+  readonly resultadoCicloAtual = signal<Tables<'v_resultado_periodo'>[]>([]);
 
   readonly receita = computed(() =>
     this.resultadoPeriodo()
@@ -128,6 +158,20 @@ export class DashboardPage implements OnInit {
     this.contasAReceber().reduce((sum, r) => sum + (r.valor_pendente ?? 0), 0),
   );
 
+  readonly receitaCiclo = computed(() =>
+    this.resultadoCicloAtual()
+      .filter((r) => r.type === 'income')
+      .reduce((sum, r) => sum + (r.amount ?? 0), 0),
+  );
+
+  readonly despesaCiclo = computed(() =>
+    this.resultadoCicloAtual()
+      .filter((r) => r.type === 'expense')
+      .reduce((sum, r) => sum + (r.amount ?? 0), 0),
+  );
+
+  readonly resultadoCiclo = computed(() => this.receitaCiclo() - this.despesaCiclo());
+
   readonly hoje = new Date().toLocaleDateString('pt-BR');
   readonly inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toLocaleDateString('pt-BR');
 
@@ -136,17 +180,24 @@ export class DashboardPage implements OnInit {
     const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
     const end = now.toISOString().slice(0, 10);
 
-    const [saldo, resultado, aPagar, aReceber] = await Promise.all([
+    const [saldo, resultado, aPagar, aReceber, ciclo] = await Promise.all([
       this.dashboardService.getSaldoContas(),
       this.dashboardService.getResultadoPeriodo(start, end),
       this.dashboardService.getContasAPagar(),
       this.dashboardService.getContasAReceber(),
+      this.dashboardService.getCicloAtual(),
     ]);
 
     this.saldoContas.set(saldo);
     this.resultadoPeriodo.set(resultado);
     this.contasAPagar.set(aPagar);
     this.contasAReceber.set(aReceber);
+    this.cicloAtual.set(ciclo);
+
+    if (ciclo) {
+      this.resultadoCicloAtual.set(await this.dashboardService.getResultadoPorCiclo(ciclo.id));
+    }
+
     this.loading.set(false);
   }
 }

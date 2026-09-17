@@ -38,6 +38,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dividas/dividas.page').then((m) => m.DividasPage),
       },
       {
+        path: 'relatorios',
+        loadComponent: () => import('./features/relatorios/relatorios.page').then((m) => m.RelatoriosPage),
+      },
+      {
         path: 'configuracoes',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/configuracoes/configuracoes.page').then((m) => m.ConfiguracoesPage),

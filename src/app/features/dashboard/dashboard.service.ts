@@ -33,4 +33,31 @@ export class DashboardService {
     if (error) throw error;
     return data ?? [];
   }
+
+  async getCicloAtual(): Promise<Tables<'cycles'> | null> {
+    const emAndamento = await this.supabase
+      .from('cycles')
+      .select('*')
+      .in('status', ['aberto', 'em_andamento'])
+      .order('start_date', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (emAndamento.error) throw emAndamento.error;
+    if (emAndamento.data) return emAndamento.data;
+
+    const maisRecente = await this.supabase
+      .from('cycles')
+      .select('*')
+      .order('start_date', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (maisRecente.error) throw maisRecente.error;
+    return maisRecente.data;
+  }
+
+  async getResultadoPorCiclo(cycleId: string): Promise<Tables<'v_resultado_periodo'>[]> {
+    const { data, error } = await this.supabase.from('v_resultado_periodo').select('*').eq('cycle_id', cycleId);
+    if (error) throw error;
+    return data ?? [];
+  }
 }
