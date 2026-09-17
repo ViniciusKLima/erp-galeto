@@ -67,7 +67,12 @@ function toIsoDate(value: Date): string {
                 <mat-option value="expense">Despesa</mat-option>
               </mat-select>
             </mat-form-field>
-            <button mat-flat-button color="primary" type="submit" [disabled]="categoriaForm.invalid">Adicionar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="categoriaForm.invalid">
+              {{ editandoCategoriaId() ? 'Salvar edição' : 'Adicionar' }}
+            </button>
+            @if (editandoCategoriaId()) {
+              <button mat-button type="button" (click)="cancelarEdicaoCategoria()">Cancelar</button>
+            }
           </form>
 
           <table mat-table [dataSource]="categorias()" class="full-width">
@@ -85,8 +90,14 @@ function toIsoDate(value: Date): string {
                 <mat-slide-toggle [checked]="c.active" (change)="alternarCategoria(c)" />
               </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="['name', 'type', 'active']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['name', 'type', 'active']"></tr>
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let c">
+                <button mat-button (click)="editarCategoria(c)">Editar</button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['name', 'type', 'active', 'acoes']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name', 'type', 'active', 'acoes']"></tr>
           </table>
         </div>
       </mat-tab>
@@ -106,7 +117,12 @@ function toIsoDate(value: Date): string {
               <mat-label>Nome</mat-label>
               <input matInput formControlName="name" />
             </mat-form-field>
-            <button mat-flat-button color="primary" type="submit" [disabled]="subcategoriaForm.invalid">Adicionar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="subcategoriaForm.invalid">
+              {{ editandoSubcategoriaId() ? 'Salvar edição' : 'Adicionar' }}
+            </button>
+            @if (editandoSubcategoriaId()) {
+              <button mat-button type="button" (click)="cancelarEdicaoSubcategoria()">Cancelar</button>
+            }
           </form>
 
           <table mat-table [dataSource]="subcategorias()" class="full-width">
@@ -124,8 +140,14 @@ function toIsoDate(value: Date): string {
                 <mat-slide-toggle [checked]="s.active" (change)="alternarSubcategoria(s)" />
               </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="['name', 'categoria', 'active']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['name', 'categoria', 'active']"></tr>
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let s">
+                <button mat-button (click)="editarSubcategoria(s)">Editar</button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['name', 'categoria', 'active', 'acoes']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name', 'categoria', 'active', 'acoes']"></tr>
           </table>
         </div>
       </mat-tab>
@@ -149,7 +171,12 @@ function toIsoDate(value: Date): string {
               <mat-label>Saldo inicial (R$)</mat-label>
               <input matInput type="number" step="0.01" formControlName="initial_balance" />
             </mat-form-field>
-            <button mat-flat-button color="primary" type="submit" [disabled]="contaForm.invalid">Adicionar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="contaForm.invalid">
+              {{ editandoContaId() ? 'Salvar edição' : 'Adicionar' }}
+            </button>
+            @if (editandoContaId()) {
+              <button mat-button type="button" (click)="cancelarEdicaoConta()">Cancelar</button>
+            }
           </form>
 
           <table mat-table [dataSource]="contas()" class="full-width">
@@ -171,8 +198,14 @@ function toIsoDate(value: Date): string {
                 <mat-slide-toggle [checked]="c.active" (change)="alternarConta(c)" />
               </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="['name', 'type', 'saldo', 'active']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['name', 'type', 'saldo', 'active']"></tr>
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let c">
+                <button mat-button (click)="editarConta(c)">Editar</button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['name', 'type', 'saldo', 'active', 'acoes']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name', 'type', 'saldo', 'active', 'acoes']"></tr>
           </table>
         </div>
       </mat-tab>
@@ -184,7 +217,12 @@ function toIsoDate(value: Date): string {
               <mat-label>Nome</mat-label>
               <input matInput formControlName="name" />
             </mat-form-field>
-            <button mat-flat-button color="primary" type="submit" [disabled]="formaPagamentoForm.invalid">Adicionar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="formaPagamentoForm.invalid">
+              {{ editandoFormaPagamentoId() ? 'Salvar edição' : 'Adicionar' }}
+            </button>
+            @if (editandoFormaPagamentoId()) {
+              <button mat-button type="button" (click)="cancelarEdicaoFormaPagamento()">Cancelar</button>
+            }
           </form>
 
           <table mat-table [dataSource]="formasPagamento()" class="full-width">
@@ -198,8 +236,14 @@ function toIsoDate(value: Date): string {
                 <mat-slide-toggle [checked]="f.active" (change)="alternarFormaPagamento(f)" />
               </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="['name', 'active']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['name', 'active']"></tr>
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let f">
+                <button mat-button (click)="editarFormaPagamento(f)">Editar</button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['name', 'active', 'acoes']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name', 'active', 'acoes']"></tr>
           </table>
         </div>
       </mat-tab>
@@ -290,6 +334,11 @@ export class ConfiguracoesPage implements OnInit {
   readonly ciclos = signal<Tables<'cycles'>[]>([]);
   readonly cicloError = signal<string | null>(null);
 
+  readonly editandoCategoriaId = signal<string | null>(null);
+  readonly editandoSubcategoriaId = signal<string | null>(null);
+  readonly editandoContaId = signal<string | null>(null);
+  readonly editandoFormaPagamentoId = signal<string | null>(null);
+
   readonly categoriaForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
     type: ['income' as 'income' | 'expense', Validators.required],
@@ -349,10 +398,26 @@ export class ConfiguracoesPage implements OnInit {
 
   async salvarCategoria(): Promise<void> {
     if (this.categoriaForm.invalid) return;
-    await this.service.criarCategoria(this.categoriaForm.getRawValue());
-    this.categoriaForm.reset({ name: '', type: 'income' });
+    const editandoId = this.editandoCategoriaId();
+    if (editandoId) {
+      await this.service.atualizarCategoria(editandoId, this.categoriaForm.getRawValue());
+      this.snackBar.open('Categoria atualizada.', 'OK', { duration: 2500 });
+    } else {
+      await this.service.criarCategoria(this.categoriaForm.getRawValue());
+      this.snackBar.open('Categoria criada.', 'OK', { duration: 2500 });
+    }
+    this.cancelarEdicaoCategoria();
     this.categorias.set(await this.service.listarCategorias());
-    this.snackBar.open('Categoria criada.', 'OK', { duration: 2500 });
+  }
+
+  editarCategoria(categoria: Tables<'transaction_categories'>): void {
+    this.editandoCategoriaId.set(categoria.id);
+    this.categoriaForm.setValue({ name: categoria.name, type: categoria.type as 'income' | 'expense' });
+  }
+
+  cancelarEdicaoCategoria(): void {
+    this.editandoCategoriaId.set(null);
+    this.categoriaForm.reset({ name: '', type: 'income' });
   }
 
   async alternarCategoria(categoria: Tables<'transaction_categories'>): Promise<void> {
@@ -362,10 +427,26 @@ export class ConfiguracoesPage implements OnInit {
 
   async salvarSubcategoria(): Promise<void> {
     if (this.subcategoriaForm.invalid) return;
-    await this.service.criarSubcategoria(this.subcategoriaForm.getRawValue());
-    this.subcategoriaForm.reset({ category_id: '', name: '' });
+    const editandoId = this.editandoSubcategoriaId();
+    if (editandoId) {
+      await this.service.atualizarSubcategoria(editandoId, this.subcategoriaForm.getRawValue());
+      this.snackBar.open('Subcategoria atualizada.', 'OK', { duration: 2500 });
+    } else {
+      await this.service.criarSubcategoria(this.subcategoriaForm.getRawValue());
+      this.snackBar.open('Subcategoria criada.', 'OK', { duration: 2500 });
+    }
+    this.cancelarEdicaoSubcategoria();
     this.subcategorias.set(await this.service.listarSubcategorias());
-    this.snackBar.open('Subcategoria criada.', 'OK', { duration: 2500 });
+  }
+
+  editarSubcategoria(subcategoria: Tables<'transaction_subcategories'>): void {
+    this.editandoSubcategoriaId.set(subcategoria.id);
+    this.subcategoriaForm.setValue({ category_id: subcategoria.category_id, name: subcategoria.name });
+  }
+
+  cancelarEdicaoSubcategoria(): void {
+    this.editandoSubcategoriaId.set(null);
+    this.subcategoriaForm.reset({ category_id: '', name: '' });
   }
 
   async alternarSubcategoria(subcategoria: Tables<'transaction_subcategories'>): Promise<void> {
@@ -375,10 +456,30 @@ export class ConfiguracoesPage implements OnInit {
 
   async salvarConta(): Promise<void> {
     if (this.contaForm.invalid) return;
-    await this.service.criarConta(this.contaForm.getRawValue());
-    this.contaForm.reset({ name: '', type: 'bank', initial_balance: 0 });
+    const editandoId = this.editandoContaId();
+    if (editandoId) {
+      await this.service.atualizarConta(editandoId, this.contaForm.getRawValue());
+      this.snackBar.open('Conta financeira atualizada.', 'OK', { duration: 2500 });
+    } else {
+      await this.service.criarConta(this.contaForm.getRawValue());
+      this.snackBar.open('Conta financeira criada.', 'OK', { duration: 2500 });
+    }
+    this.cancelarEdicaoConta();
     this.contas.set(await this.service.listarContas());
-    this.snackBar.open('Conta financeira criada.', 'OK', { duration: 2500 });
+  }
+
+  editarConta(conta: Tables<'financial_accounts'>): void {
+    this.editandoContaId.set(conta.id);
+    this.contaForm.setValue({
+      name: conta.name,
+      type: conta.type as 'bank' | 'cash' | 'other',
+      initial_balance: conta.initial_balance,
+    });
+  }
+
+  cancelarEdicaoConta(): void {
+    this.editandoContaId.set(null);
+    this.contaForm.reset({ name: '', type: 'bank', initial_balance: 0 });
   }
 
   async alternarConta(conta: Tables<'financial_accounts'>): Promise<void> {
@@ -388,10 +489,26 @@ export class ConfiguracoesPage implements OnInit {
 
   async salvarFormaPagamento(): Promise<void> {
     if (this.formaPagamentoForm.invalid) return;
-    await this.service.criarFormaPagamento(this.formaPagamentoForm.getRawValue());
-    this.formaPagamentoForm.reset({ name: '' });
+    const editandoId = this.editandoFormaPagamentoId();
+    if (editandoId) {
+      await this.service.atualizarFormaPagamento(editandoId, this.formaPagamentoForm.getRawValue());
+      this.snackBar.open('Forma de pagamento atualizada.', 'OK', { duration: 2500 });
+    } else {
+      await this.service.criarFormaPagamento(this.formaPagamentoForm.getRawValue());
+      this.snackBar.open('Forma de pagamento criada.', 'OK', { duration: 2500 });
+    }
+    this.cancelarEdicaoFormaPagamento();
     this.formasPagamento.set(await this.service.listarFormasPagamento());
-    this.snackBar.open('Forma de pagamento criada.', 'OK', { duration: 2500 });
+  }
+
+  editarFormaPagamento(forma: Tables<'payment_methods'>): void {
+    this.editandoFormaPagamentoId.set(forma.id);
+    this.formaPagamentoForm.setValue({ name: forma.name });
+  }
+
+  cancelarEdicaoFormaPagamento(): void {
+    this.editandoFormaPagamentoId.set(null);
+    this.formaPagamentoForm.reset({ name: '' });
   }
 
   async alternarFormaPagamento(forma: Tables<'payment_methods'>): Promise<void> {

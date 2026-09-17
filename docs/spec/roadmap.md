@@ -18,10 +18,9 @@ Pendências menores, não bloqueantes:
 Telas dedicadas, listam simples + parcelas com saldo pendente, ação de liquidar direto na linha.
 
 ## ✅ Configurações
-Categorias, subcategorias, contas financeiras, formas de pagamento (criar + ativar/desativar) e ciclos (criar + avançar status).
+Categorias, subcategorias, contas financeiras, formas de pagamento e ciclos — criar, editar e ativar/desativar (inclusive saldo inicial de conta editável depois de criada).
 
-Pendências menores:
-- Editar nome/tipo de um item já existente (hoje só cria e ativa/desativa).
+Pendência menor:
 - Gestão de usuários (ativar/desativar, promover a admin) continua só via SQL direto no Supabase — é a única parte do sistema que ainda não tem tela.
 
 ## ✅ Estoque e Insumos
