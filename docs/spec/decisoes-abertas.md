@@ -37,3 +37,9 @@ Um operador só cancela uma movimentação que ele mesmo criou, que ainda está 
 Todo usuário novo nasce como `operador` (trigger `handle_new_user`). Não criei nenhuma conta ainda porque isso exigiria eu inventar uma senha em seu nome — não é algo que eu deva decidir sozinho.
 
 **Ação necessária de você**: crie sua conta pela tela de login do sistema (ela vai falhar até você existir — use o Supabase Dashboard → Authentication → Users → "Add user" com seu e-mail e uma senha, por enquanto, já que ainda não construí uma tela de "esqueci minha senha"/onboarding). Depois disso, é só rodar uma linha de SQL (`update profiles set role = 'admin' where id = '<seu-user-id>'`) — posso fazer essa parte assim que você tiver a conta criada e me passar o e-mail.
+
+## 7. Site publicado, mas atrás de login do Vercel (preciso da sua ação)
+
+O deploy no Vercel funcionou, mas o projeto nasceu com "Vercel Authentication" (proteção padrão de novos projetos) ativada — qualquer visita redireciona para um login do Vercel antes de chegar no app. A conexão que uso para gerenciar sua conta Vercel não tem permissão para ler/alterar essa configuração (erro 403 pedindo reautenticação de escopo), então não consigo desligar isso sozinho.
+
+**Ação necessária de você**: vercel.com → projeto `erp-galeto` → Settings → Deployment Protection → desativar "Vercel Authentication" (ou restringir só a preview deployments, deixando produção pública). Depois disso o site fica acessível para qualquer pessoa da equipe da galeteria, sem precisar de conta no Vercel.

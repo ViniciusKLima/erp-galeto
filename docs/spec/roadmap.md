@@ -5,13 +5,17 @@ Ordem sugerida, seguindo o princípio de `prompt-mestre-claude.md` ("construir p
 ## 1. Fechar o módulo de Movimentações
 Ver lacunas detalhadas em `modulo-movimentacoes.md`: liquidação por parcela individual, cancelamento pela UI, filtros, edição.
 
-## 2. Configurações (hoje é um placeholder)
-Tela de admin para CRUD de:
-- Categorias e subcategorias (ativar/desativar, não apagar fisicamente — `categorias-contas-configuracoes.md`).
-- Contas financeiras (criar, editar, ativar/desativar, ver saldo via `v_saldo_contas`).
-- Formas de pagamento.
-- Usuários (`profiles`): ativar/desativar, promover a admin — hoje só dá pra fazer via SQL direto no Supabase.
-- **Ciclos**: criar um novo ciclo (label, data início/fim), avançar status (`aberto` → `em_andamento` → `fechamento` → `fechado`). Sem isso, `cycle_id` nas movimentações fica sempre vazio na prática.
+## 2. Configurações — ✅ feito (categorias/subcategorias/contas/formas/ciclos)
+Tela de admin com abas para:
+- Categorias e subcategorias (criar + ativar/desativar, não apaga fisicamente — `categorias-contas-configuracoes.md`).
+- Contas financeiras (criar + ativar/desativar; saldo inicial editável na criação; saldo atual continua vindo só de `v_saldo_contas`, não é editável direto).
+- Formas de pagamento (criar + ativar/desativar).
+- Ciclos: criar (label, início, fim) e avançar status (`aberto` → `em_andamento` → `fechamento` → `fechado`).
+
+Ainda falta nesta tela:
+- Editar nome/tipo de um item já criado (hoje só cria e ativa/desativa).
+- Usuários (`profiles`): ativar/desativar, promover a admin — continua só via SQL direto no Supabase.
+- Editar saldo inicial de uma conta depois de criada.
 
 ## 3. Contas a Pagar / Contas a Receber (telas dedicadas)
 As views `v_contas_a_pagar` e `v_contas_a_receber` já existem e já agregam simples + parcelas com saldo pendente. Falta uma tela que liste isso por vencimento, com o botão de liquidar direto (reaproveita `liquidacao-form.dialog.ts`).
