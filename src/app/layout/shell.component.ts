@@ -32,6 +32,14 @@ import { AuthService } from '../core/auth/auth.service';
             <mat-icon matListItemIcon>receipt_long</mat-icon>
             <span matListItemTitle>Movimentações</span>
           </a>
+          <a mat-list-item routerLink="/contas-a-pagar" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>arrow_upward</mat-icon>
+            <span matListItemTitle>Contas a pagar</span>
+          </a>
+          <a mat-list-item routerLink="/contas-a-receber" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>arrow_downward</mat-icon>
+            <span matListItemTitle>Contas a receber</span>
+          </a>
           @if (auth.isAdmin()) {
             <a mat-list-item routerLink="/configuracoes" routerLinkActive="active-link">
               <mat-icon matListItemIcon>settings</mat-icon>

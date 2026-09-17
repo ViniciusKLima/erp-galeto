@@ -22,6 +22,14 @@ export const routes: Routes = [
           import('./features/movimentacoes/movimentacoes-list.page').then((m) => m.MovimentacoesListPage),
       },
       {
+        path: 'contas-a-pagar',
+        loadComponent: () => import('./features/contas/contas-a-pagar.page').then((m) => m.ContasAPagarPage),
+      },
+      {
+        path: 'contas-a-receber',
+        loadComponent: () => import('./features/contas/contas-a-receber.page').then((m) => m.ContasAReceberPage),
+      },
+      {
         path: 'configuracoes',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/configuracoes/configuracoes.page').then((m) => m.ConfiguracoesPage),
