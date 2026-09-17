@@ -7,8 +7,10 @@ export type MovimentacaoFiltro = {
   status?: string;
   categoriaId?: string;
   cicloId?: string;
+  formaPagamentoId?: string;
   dataInicio?: string;
   dataFim?: string;
+  busca?: string;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -25,8 +27,10 @@ export class MovimentacoesService {
     if (filtro.status) query = query.eq('status', filtro.status);
     if (filtro.categoriaId) query = query.eq('category_id', filtro.categoriaId);
     if (filtro.cicloId) query = query.eq('cycle_id', filtro.cicloId);
+    if (filtro.formaPagamentoId) query = query.eq('payment_method_id', filtro.formaPagamentoId);
     if (filtro.dataInicio) query = query.gte('transaction_date', filtro.dataInicio);
     if (filtro.dataFim) query = query.lte('transaction_date', filtro.dataFim);
+    if (filtro.busca) query = query.ilike('description', `%${filtro.busca}%`);
 
     const { data, error } = await query;
     if (error) throw error;
@@ -125,6 +129,21 @@ export class MovimentacoesService {
 
   async listarCiclos(): Promise<Tables<'cycles'>[]> {
     const { data, error } = await this.supabase.from('cycles').select('*').order('start_date', { ascending: false });
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async criarTransferencia(input: TablesInsert<'transfers'>): Promise<void> {
+    const { error } = await this.supabase.from('transfers').insert(input);
+    if (error) throw error;
+  }
+
+  async listarTransferenciasRecentes(limite = 5): Promise<Tables<'transfers'>[]> {
+    const { data, error } = await this.supabase
+      .from('transfers')
+      .select('*')
+      .order('transfer_date', { ascending: false })
+      .limit(limite);
     if (error) throw error;
     return data ?? [];
   }

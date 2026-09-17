@@ -12,12 +12,29 @@ export class DashboardService {
     return data ?? [];
   }
 
-  async getResultadoPeriodo(startDate: string, endDate: string): Promise<Tables<'v_resultado_periodo'>[]> {
+  async getMovimentacoesPeriodo(startDate: string, endDate: string): Promise<Tables<'financial_transactions'>[]> {
     const { data, error } = await this.supabase
-      .from('v_resultado_periodo')
+      .from('financial_transactions')
+      .select('*')
+      .neq('status', 'cancelado')
+      .gte('transaction_date', startDate)
+      .lte('transaction_date', endDate);
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async getFluxoCaixaPeriodo(
+    startDate: string,
+    endDate: string,
+    financialAccountId?: string | null,
+  ): Promise<Tables<'v_fluxo_caixa'>[]> {
+    let query = this.supabase
+      .from('v_fluxo_caixa')
       .select('*')
       .gte('data', startDate)
       .lte('data', endDate);
+    if (financialAccountId) query = query.eq('financial_account_id', financialAccountId);
+    const { data, error } = await query;
     if (error) throw error;
     return data ?? [];
   }
@@ -57,6 +74,47 @@ export class DashboardService {
 
   async getResultadoPorCiclo(cycleId: string): Promise<Tables<'v_resultado_periodo'>[]> {
     const { data, error } = await this.supabase.from('v_resultado_periodo').select('*').eq('cycle_id', cycleId);
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async getUltimosCiclosComResultado(
+    limite = 6,
+  ): Promise<{ ciclo: Tables<'cycles'>; receita: number; despesa: number }[]> {
+    const { data: ciclos, error: erroCiclos } = await this.supabase
+      .from('cycles')
+      .select('*')
+      .order('start_date', { ascending: false })
+      .limit(limite);
+    if (erroCiclos) throw erroCiclos;
+    if (!ciclos || ciclos.length === 0) return [];
+
+    const ids = ciclos.map((c) => c.id);
+    const { data: resultado, error: erroResultado } = await this.supabase
+      .from('v_resultado_periodo')
+      .select('*')
+      .in('cycle_id', ids);
+    if (erroResultado) throw erroResultado;
+
+    return ciclos
+      .map((ciclo) => {
+        const linhas = (resultado ?? []).filter((r) => r.cycle_id === ciclo.id);
+        return {
+          ciclo,
+          receita: linhas.filter((r) => r.type === 'income').reduce((s, r) => s + (r.amount ?? 0), 0),
+          despesa: linhas.filter((r) => r.type === 'expense').reduce((s, r) => s + (r.amount ?? 0), 0),
+        };
+      })
+      .reverse();
+  }
+
+  async getMovimentacoesRecentes(limite = 8): Promise<Tables<'financial_transactions'>[]> {
+    const { data, error } = await this.supabase
+      .from('financial_transactions')
+      .select('*')
+      .order('transaction_date', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(limite);
     if (error) throw error;
     return data ?? [];
   }

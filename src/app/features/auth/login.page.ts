@@ -21,36 +21,34 @@ import { AuthService } from '../../core/auth/auth.service';
   ],
   template: `
     <div class="login-container">
-      <mat-card class="login-card">
-        <mat-card-header>
-          <mat-card-title>Galeteria — Gestão Financeira</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="form" (ngSubmit)="submit()">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>E-mail</mat-label>
-              <input matInput type="email" formControlName="email" autocomplete="username" />
-            </mat-form-field>
+      <div class="login-card">
+        <img src="logo.png" alt="Galeto do Fofão" class="logo" />
+        <p class="tagline">Gestão financeira e operacional</p>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Senha</mat-label>
-              <input matInput type="password" formControlName="password" autocomplete="current-password" />
-            </mat-form-field>
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>E-mail</mat-label>
+            <input matInput type="email" formControlName="email" autocomplete="username" />
+          </mat-form-field>
 
-            @if (errorMessage()) {
-              <p class="error">{{ errorMessage() }}</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Senha</mat-label>
+            <input matInput type="password" formControlName="password" autocomplete="current-password" />
+          </mat-form-field>
+
+          @if (errorMessage()) {
+            <p class="error">{{ errorMessage() }}</p>
+          }
+
+          <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="form.invalid || loading()">
+            @if (loading()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Entrar
             }
-
-            <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="form.invalid || loading()">
-              @if (loading()) {
-                <mat-spinner diameter="20" />
-              } @else {
-                Entrar
-              }
-            </button>
-          </form>
-        </mat-card-content>
-      </mat-card>
+          </button>
+        </form>
+      </div>
     </div>
   `,
   styles: `
@@ -59,18 +57,36 @@ import { AuthService } from '../../core/auth/auth.service';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--mat-sys-surface-container-low, #f5f5f5);
+      background: var(--brand-background);
     }
     .login-card {
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
+      background: var(--brand-surface);
+      border: 1px solid var(--brand-border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .logo {
+      height: 56px;
+      margin-bottom: 8px;
+    }
+    .tagline {
+      margin: 0 0 28px;
+      color: var(--brand-ink-muted);
+      font-size: 0.9rem;
+    }
+    form {
+      text-align: left;
     }
     .full-width {
       width: 100%;
       margin-bottom: 8px;
     }
     .error {
-      color: var(--mat-sys-error, #b3261e);
+      color: var(--color-danger);
       font-size: 0.85rem;
       margin: 0 0 8px;
     }
