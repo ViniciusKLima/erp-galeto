@@ -1,6 +1,6 @@
 # Roadmap — status dos módulos
 
-Todos os módulos do escopo inicial (`contexto-projeto.md`) têm uma versão funcional implementada. O que resta agora é refino, não construção do zero.
+Todos os módulos do escopo inicial (`contexto-projeto.md`) têm uma versão funcional implementada, incluindo gestão de usuários pela própria interface. O que resta é só polimento (paginação de tabelas grandes, exportação de relatórios) — nada bloqueante para uso real.
 
 ## ✅ Autenticação
 Login/logout via Supabase Auth, guard de rota, guard de admin.
@@ -20,8 +20,7 @@ Telas dedicadas, listam simples + parcelas com saldo pendente, ação de liquida
 ## ✅ Configurações
 Categorias, subcategorias, contas financeiras, formas de pagamento e ciclos — criar, editar e ativar/desativar (inclusive saldo inicial de conta editável depois de criada).
 
-Pendência menor:
-- Gestão de usuários (ativar/desativar, promover a admin) continua só via SQL direto no Supabase — é a única parte do sistema que ainda não tem tela.
+Inclui aba **Usuários** (admin): ativar/desativar e promover/rebaixar entre operador e admin — a própria conta logada fica travada nessa tela para evitar autobloqueio acidental.
 
 ## ✅ Estoque e Insumos
 Cadastro informacional (compra, consumo, rendimento, fornecedor, valor de venda), ativar/desativar item.

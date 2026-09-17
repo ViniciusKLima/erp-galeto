@@ -12,6 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfiguracoesService } from './configuracoes.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { Tables } from '../../core/types/database.types';
 
 const CICLO_PROXIMO_STATUS: Record<string, string | null> = {
@@ -300,6 +301,39 @@ function toIsoDate(value: Date): string {
           </table>
         </div>
       </mat-tab>
+
+      <mat-tab label="Usuários">
+        <div class="tab-content">
+          <table mat-table [dataSource]="usuarios()" class="full-width">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nome</th>
+              <td mat-cell *matCellDef="let u">{{ u.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef>Perfil</th>
+              <td mat-cell *matCellDef="let u">
+                <mat-select
+                  [value]="u.role"
+                  [disabled]="souEu(u.id)"
+                  (selectionChange)="alterarRoleUsuario(u, $event.value)"
+                >
+                  <mat-option value="operador">Operador</mat-option>
+                  <mat-option value="admin">Admin</mat-option>
+                </mat-select>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="active">
+              <th mat-header-cell *matHeaderCellDef>Ativo</th>
+              <td mat-cell *matCellDef="let u">
+                <mat-slide-toggle [checked]="u.active" [disabled]="souEu(u.id)" (change)="alternarUsuario(u)" />
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['name', 'role', 'active']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name', 'role', 'active']"></tr>
+          </table>
+          <p class="hint">Sua própria conta não pode ser alterada por aqui (evita ficar sem acesso por engano).</p>
+        </div>
+      </mat-tab>
     </mat-tab-group>
   `,
   styles: `
@@ -320,18 +354,25 @@ function toIsoDate(value: Date): string {
       color: #c62828;
       font-size: 0.85rem;
     }
+    .hint {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
   `,
 })
 export class ConfiguracoesPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(ConfiguracoesService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly auth = inject(AuthService);
 
   readonly categorias = signal<Tables<'transaction_categories'>[]>([]);
   readonly subcategorias = signal<Tables<'transaction_subcategories'>[]>([]);
   readonly contas = signal<Tables<'financial_accounts'>[]>([]);
   readonly formasPagamento = signal<Tables<'payment_methods'>[]>([]);
   readonly ciclos = signal<Tables<'cycles'>[]>([]);
+  readonly usuarios = signal<Tables<'profiles'>[]>([]);
   readonly cicloError = signal<string | null>(null);
 
   readonly editandoCategoriaId = signal<string | null>(null);
@@ -370,18 +411,37 @@ export class ConfiguracoesPage implements OnInit {
   }
 
   private async recarregarTudo(): Promise<void> {
-    const [categorias, subcategorias, contas, formasPagamento, ciclos] = await Promise.all([
+    const [categorias, subcategorias, contas, formasPagamento, ciclos, usuarios] = await Promise.all([
       this.service.listarCategorias(),
       this.service.listarSubcategorias(),
       this.service.listarContas(),
       this.service.listarFormasPagamento(),
       this.service.listarCiclos(),
+      this.service.listarUsuarios(),
     ]);
     this.categorias.set(categorias);
     this.subcategorias.set(subcategorias);
     this.contas.set(contas);
     this.formasPagamento.set(formasPagamento);
     this.ciclos.set(ciclos);
+    this.usuarios.set(usuarios);
+  }
+
+  souEu(userId: string): boolean {
+    return this.auth.session()?.user.id === userId;
+  }
+
+  async alternarUsuario(usuario: Tables<'profiles'>): Promise<void> {
+    if (this.souEu(usuario.id)) return;
+    await this.service.atualizarUsuario(usuario.id, { active: !usuario.active });
+    this.usuarios.set(await this.service.listarUsuarios());
+  }
+
+  async alterarRoleUsuario(usuario: Tables<'profiles'>, role: string): Promise<void> {
+    if (this.souEu(usuario.id)) return;
+    await this.service.atualizarUsuario(usuario.id, { role });
+    this.usuarios.set(await this.service.listarUsuarios());
+    this.snackBar.open('Perfil atualizado.', 'OK', { duration: 2500 });
   }
 
   nomeCategoria(categoryId: string): string {

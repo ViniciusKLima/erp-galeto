@@ -94,4 +94,15 @@ export class ConfiguracoesService {
     const { error } = await this.supabase.from('cycles').update({ status }).eq('id', id);
     if (error) throw error;
   }
+
+  async listarUsuarios(): Promise<Tables<'profiles'>[]> {
+    const { data, error } = await this.supabase.from('profiles').select('*').order('name');
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async atualizarUsuario(id: string, input: TablesUpdate<'profiles'>): Promise<void> {
+    const { error } = await this.supabase.from('profiles').update(input).eq('id', id);
+    if (error) throw error;
+  }
 }
