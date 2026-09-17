@@ -49,6 +49,14 @@ export class MovimentacoesService {
     return data;
   }
 
+  async atualizarSimples(
+    id: string,
+    input: Omit<TablesInsert<'financial_transactions'>, 'type' | 'created_by'>,
+  ): Promise<void> {
+    const { error } = await this.supabase.from('financial_transactions').update(input).eq('id', id);
+    if (error) throw error;
+  }
+
   async criarParcelada(args: FunctionArgs<'criar_movimentacao_parcelada'>): Promise<string> {
     const { data, error } = await this.supabase.rpc('criar_movimentacao_parcelada', args);
     if (error) throw error;

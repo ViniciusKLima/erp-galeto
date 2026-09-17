@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,6 +16,10 @@ function toIsoDate(value: Date | string): string {
   const date = typeof value === 'string' ? new Date(value) : value;
   return date.toISOString().slice(0, 10);
 }
+
+export type MovimentacaoFormDialogData = {
+  existing?: Tables<'financial_transactions'>;
+};
 
 @Component({
   selector: 'app-movimentacao-form-dialog',
@@ -33,7 +37,7 @@ function toIsoDate(value: Date | string): string {
     MatNativeDateModule,
   ],
   template: `
-    <h2 mat-dialog-title>Nova movimentação</h2>
+    <h2 mat-dialog-title>{{ isEditing ? 'Editar movimentação' : 'Nova movimentação' }}</h2>
     <form [formGroup]="form" (ngSubmit)="submit()">
       <mat-dialog-content>
         <mat-button-toggle-group formControlName="type" class="full-width" (change)="onTipoChange()">
@@ -107,7 +111,9 @@ function toIsoDate(value: Date | string): string {
           </mat-select>
         </mat-form-field>
 
-        <mat-checkbox formControlName="is_installment">Parcelado</mat-checkbox>
+        @if (!isEditing) {
+          <mat-checkbox formControlName="is_installment">Parcelado</mat-checkbox>
+        }
 
         @if (form.controls.is_installment.value) {
           <mat-form-field appearance="outline" class="full-width">
@@ -155,6 +161,9 @@ export class MovimentacaoFormDialog implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(MovimentacoesService);
   private readonly dialogRef = inject(MatDialogRef<MovimentacaoFormDialog>);
+  private readonly data = inject<MovimentacaoFormDialogData | null>(MAT_DIALOG_DATA, { optional: true });
+
+  readonly isEditing = !!this.data?.existing;
 
   readonly saving = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -190,7 +199,28 @@ export class MovimentacaoFormDialog implements OnInit {
     this.formasPagamento.set(formas);
     this.contatos.set(contatos);
     this.ciclos.set(ciclos);
-    await this.onTipoChange();
+
+    const existing = this.data?.existing;
+    if (existing) {
+      this.form.patchValue({
+        type: existing.type as 'income' | 'expense',
+        description: existing.description,
+        amount: existing.amount,
+        transaction_date: new Date(existing.transaction_date),
+        category_id: existing.category_id,
+        payment_method_id: existing.payment_method_id,
+        counterparty_id: existing.counterparty_id,
+        cycle_id: existing.cycle_id,
+        notes: existing.notes ?? '',
+      });
+      this.categorias.set(await this.service.listarCategorias(existing.type as 'income' | 'expense'));
+      if (existing.subcategory_id) {
+        this.subcategorias.set(await this.service.listarSubcategorias(existing.category_id));
+        this.form.controls.subcategory_id.setValue(existing.subcategory_id);
+      }
+    } else {
+      await this.onTipoChange();
+    }
   }
 
   async onTipoChange(): Promise<void> {
@@ -214,7 +244,19 @@ export class MovimentacaoFormDialog implements OnInit {
     const value = this.form.getRawValue();
 
     try {
-      if (value.is_installment) {
+      if (this.isEditing && this.data?.existing) {
+        await this.service.atualizarSimples(this.data.existing.id, {
+          description: value.description,
+          amount: value.amount,
+          transaction_date: toIsoDate(value.transaction_date),
+          category_id: value.category_id,
+          subcategory_id: value.subcategory_id,
+          payment_method_id: value.payment_method_id,
+          counterparty_id: value.counterparty_id,
+          cycle_id: value.cycle_id,
+          notes: value.notes,
+        });
+      } else if (value.is_installment) {
         await this.service.criarParcelada({
           p_type: value.type,
           p_description: value.description,
