@@ -22,20 +22,12 @@ export const routes: Routes = [
           import('./features/movimentacoes/movimentacoes-list.page').then((m) => m.MovimentacoesListPage),
       },
       {
-        path: 'contas-a-pagar',
-        loadComponent: () => import('./features/contas/contas-a-pagar.page').then((m) => m.ContasAPagarPage),
-      },
-      {
-        path: 'contas-a-receber',
-        loadComponent: () => import('./features/contas/contas-a-receber.page').then((m) => m.ContasAReceberPage),
-      },
-      {
         path: 'estoque',
         loadComponent: () => import('./features/estoque/estoque.page').then((m) => m.EstoquePage),
       },
       {
         path: 'dividas',
-        loadComponent: () => import('./features/dividas/dividas.page').then((m) => m.DividasPage),
+        loadComponent: () => import('./features/dividas/dividas-hub.page').then((m) => m.DividasHubPage),
       },
       {
         path: 'relatorios',

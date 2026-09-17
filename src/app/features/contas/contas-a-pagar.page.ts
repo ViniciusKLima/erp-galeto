@@ -8,18 +8,33 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DashboardService } from '../dashboard/dashboard.service';
 import { MovimentacoesService } from '../movimentacoes/movimentacoes.service';
 import { LiquidacaoFormDialog } from '../movimentacoes/liquidacao-form.dialog';
+import { StatusBadgeComponent } from '../../shared/status-badge/status-badge.component';
+import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
 import { Tables } from '../../core/types/database.types';
 
 @Component({
   selector: 'app-contas-a-pagar-page',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, MatTableModule, MatButtonModule, MatDialogModule, MatProgressSpinnerModule],
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    MatTableModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    StatusBadgeComponent,
+    EmptyStateComponent,
+  ],
   template: `
-    <h1>Contas a pagar</h1>
-    <p class="total">Total pendente: {{ total() | currency: 'BRL' }}</p>
+    <div class="total-bar">
+      <span class="total-label">Total pendente</span>
+      <span class="total-valor text-danger">{{ total() | currency: 'BRL' }}</span>
+    </div>
 
     @if (loading()) {
       <mat-spinner diameter="32" />
+    } @else if (itens().length === 0) {
+      <app-empty-state icon="task_alt" title="Nenhuma conta a pagar" description="Tudo em dia por aqui." />
     } @else {
       <table mat-table [dataSource]="itens()" class="full-width">
         <ng-container matColumnDef="vencimento">
@@ -37,9 +52,14 @@ import { Tables } from '../../core/types/database.types';
           <td mat-cell *matCellDef="let i">{{ nomeContato(i.counterparty_id) }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let i"><app-status-badge [status]="i.status" /></td>
+        </ng-container>
+
         <ng-container matColumnDef="valor">
           <th mat-header-cell *matHeaderCellDef>Valor pendente</th>
-          <td mat-cell *matCellDef="let i">{{ i.valor_pendente | currency: 'BRL' }}</td>
+          <td mat-cell *matCellDef="let i" class="valor-cell text-danger">{{ i.valor_pendente | currency: 'BRL' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="acoes">
@@ -52,24 +72,28 @@ import { Tables } from '../../core/types/database.types';
         <tr mat-header-row *matHeaderRowDef="colunas"></tr>
         <tr mat-row *matRowDef="let row; columns: colunas"></tr>
       </table>
-
-      @if (itens().length === 0) {
-        <p class="vazio">Nenhuma conta a pagar no momento.</p>
-      }
     }
   `,
   styles: `
-    .total {
-      font-size: 1.1rem;
-      font-weight: 600;
+    .total-bar {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
       margin-bottom: 16px;
+    }
+    .total-label {
+      color: var(--brand-ink-muted);
+      font-size: 0.9rem;
+    }
+    .total-valor {
+      font-size: 1.25rem;
+      font-weight: 700;
     }
     .full-width {
       width: 100%;
     }
-    .vazio {
-      color: rgba(0, 0, 0, 0.6);
-      margin-top: 16px;
+    .valor-cell {
+      font-weight: 600;
     }
   `,
 })
@@ -82,7 +106,7 @@ export class ContasAPagarPage implements OnInit {
   readonly loading = signal(true);
   readonly itens = signal<Tables<'v_contas_a_pagar'>[]>([]);
   readonly contatos = signal<Tables<'contacts'>[]>([]);
-  readonly colunas = ['vencimento', 'descricao', 'fornecedor', 'valor', 'acoes'];
+  readonly colunas = ['vencimento', 'descricao', 'fornecedor', 'status', 'valor', 'acoes'];
 
   readonly total = () => this.itens().reduce((sum, i) => sum + (i.valor_pendente ?? 0), 0);
 

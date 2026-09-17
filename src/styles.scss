@@ -6,12 +6,53 @@ html {
   @include mat.theme((
     color: (
       theme-type: light,
-      primary: mat.$violet-palette,
-      tertiary: mat.$blue-palette,
+      primary: mat.$azure-palette,
+      tertiary: mat.$orange-palette,
     ),
     typography: Roboto,
     density: 0,
   ));
+
+  // Identidade visual "Galeto do Fofão" — sobrescreve a paleta M3 gerada
+  // com os tokens exatos da marca (ver .claude/reestrutura-visual.md).
+  --brand-primary: #59b1de;
+  --brand-primary-dark: #2f7ea8;
+  --brand-primary-light: #e7f4fb;
+  --brand-amber: #e6a417;
+  --brand-amber-light: #fdf1de;
+  --brand-navy: #1c4a63;
+  --brand-background: #fff7ea;
+  --brand-surface: #ffffff;
+  --brand-border: #ece1cd;
+  --brand-ink: #332b1f;
+  --brand-ink-muted: #756a58;
+
+  --color-success: #1a8a5f;
+  --color-success-bg: #e5f5ee;
+  --color-danger: #d0372f;
+  --color-danger-bg: #fbeae9;
+  --color-warning: #b3690a;
+  --color-warning-bg: var(--brand-amber-light);
+  --color-neutral: #6b6255;
+  --color-neutral-bg: #f2ede2;
+
+  --mat-sys-primary: var(--brand-primary);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: var(--brand-primary-light);
+  --mat-sys-on-primary-container: var(--brand-navy);
+  --mat-sys-background: var(--brand-background);
+  --mat-sys-on-background: var(--brand-ink);
+  --mat-sys-surface: var(--brand-surface);
+  --mat-sys-on-surface: var(--brand-ink);
+  --mat-sys-surface-container-lowest: #ffffff;
+  --mat-sys-surface-container-low: #fffdf9;
+  --mat-sys-surface-container: #fff9ef;
+  --mat-sys-surface-container-high: #fdf1de;
+  --mat-sys-surface-container-highest: #f7e6c4;
+  --mat-sys-outline: var(--brand-border);
+  --mat-sys-outline-variant: var(--brand-border);
+  --mat-sys-tertiary: var(--brand-amber);
+  --mat-sys-on-tertiary: #ffffff;
 }
 
 html,
@@ -22,4 +63,57 @@ body {
 
 body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--brand-background);
+  color: var(--brand-ink);
+}
+
+// utilitários compartilhados de layout/tipografia — usados pelas páginas
+// para não repetir a mesma estrutura de cabeçalho/grade em cada tela.
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1280px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.surface-card {
+  background: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brand-ink);
+  margin: 0 0 16px;
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+.text-muted {
+  color: var(--brand-ink-muted);
 }
