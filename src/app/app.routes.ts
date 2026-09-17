@@ -30,6 +30,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/contas/contas-a-receber.page').then((m) => m.ContasAReceberPage),
       },
       {
+        path: 'estoque',
+        loadComponent: () => import('./features/estoque/estoque.page').then((m) => m.EstoquePage),
+      },
+      {
+        path: 'dividas',
+        loadComponent: () => import('./features/dividas/dividas.page').then((m) => m.DividasPage),
+      },
+      {
         path: 'configuracoes',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/configuracoes/configuracoes.page').then((m) => m.ConfiguracoesPage),

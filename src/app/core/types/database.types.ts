@@ -654,8 +654,24 @@ export type Database = {
         }
         Returns: string
       }
+      criar_divida_parcelada: {
+        Args: {
+          p_creditor_id: string
+          p_description: string
+          p_first_due_date: string
+          p_installments_total: number
+          p_notes: string
+          p_start_date: string
+          p_total_amount: number
+        }
+        Returns: string
+      }
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean }
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
+      registrar_pagamento_divida: {
+        Args: { p_debt_installment_id: string; p_paid_at: string }
+        Returns: undefined
+      }
       registrar_liquidacao: {
         Args: {
           p_amount: number
