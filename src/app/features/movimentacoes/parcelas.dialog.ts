@@ -3,9 +3,9 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MovimentacoesService } from './movimentacoes.service';
 import { LiquidacaoFormDialog } from './liquidacao-form.dialog';
+import { StatusBadgeComponent } from '../../shared/status-badge/status-badge.component';
 import { Tables } from '../../core/types/database.types';
 
 export type ParcelasDialogData = {
@@ -13,17 +13,10 @@ export type ParcelasDialogData = {
   descricao: string;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  pendente: 'Pendente',
-  pago: 'Pago',
-  recebido: 'Recebido',
-  cancelado: 'Cancelado',
-};
-
 @Component({
   selector: 'app-parcelas-dialog',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, MatDialogModule, MatTableModule, MatButtonModule, MatChipsModule],
+  imports: [CurrencyPipe, DatePipe, MatDialogModule, MatTableModule, MatButtonModule, StatusBadgeComponent],
   template: `
     <h2 mat-dialog-title>Parcelas — {{ data.descricao }}</h2>
     <mat-dialog-content>
@@ -51,7 +44,7 @@ const STATUS_LABEL: Record<string, string> = {
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let p">
-            <mat-chip [class]="'status-' + p.status">{{ statusLabel(p.status) }}</mat-chip>
+            <app-status-badge [status]="p.status" />
           </td>
         </ng-container>
 
@@ -76,17 +69,6 @@ const STATUS_LABEL: Record<string, string> = {
     .full-width {
       width: 100%;
     }
-    .status-pago,
-    .status-recebido {
-      background: #c8e6c9;
-    }
-    .status-pendente {
-      background: #fff3cd;
-    }
-    .status-cancelado {
-      background: #eeeeee;
-      text-decoration: line-through;
-    }
   `,
 })
 export class ParcelasDialog implements OnInit {
@@ -103,10 +85,6 @@ export class ParcelasDialog implements OnInit {
 
   async carregar(): Promise<void> {
     this.parcelas.set(await this.service.listarParcelas(this.data.transactionId));
-  }
-
-  statusLabel(status: string): string {
-    return STATUS_LABEL[status] ?? status;
   }
 
   liquidar(parcela: Tables<'installments'>): void {

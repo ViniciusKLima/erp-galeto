@@ -47,7 +47,7 @@ export type CancelarMovimentacaoDialogData = {
       width: 100%;
     }
     .error {
-      color: #c62828;
+      color: var(--color-danger);
       font-size: 0.85rem;
     }
   `,

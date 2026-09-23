@@ -76,7 +76,7 @@ export type LiquidacaoDialogData = {
       display: block;
     }
     .error {
-      color: #c62828;
+      color: var(--color-danger);
       font-size: 0.85rem;
     }
   `,

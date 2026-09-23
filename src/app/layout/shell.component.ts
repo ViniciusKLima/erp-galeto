@@ -35,6 +35,11 @@ const NAV_ITEMS: NavItem[] = [
         #sidenav
         class="sidebar"
       >
+        <div class="sidebar-brand">
+          <img src="favicon.png" alt="" class="brand-mark" />
+          <span class="brand-name">Galeto do Fofão</span>
+        </div>
+
         <nav class="sidebar-nav">
           @for (item of navItens; track item.path) {
             @if (!item.adminOnly || auth.isAdmin()) {
@@ -51,21 +56,16 @@ const NAV_ITEMS: NavItem[] = [
           }
         </nav>
 
-        <div class="sidebar-footer">
-          <div class="logo-plate">
-            <img src="logo.png" alt="Galeto do Fofão" />
-          </div>
-
+        <div class="sidebar-account">
           @if (auth.profile(); as profile) {
+            <div class="account-avatar">{{ profile.name.charAt(0).toUpperCase() }}</div>
             <div class="user-info">
               <span class="user-name">{{ profile.name }}</span>
               <span class="user-role">{{ profile.role === 'admin' ? 'Administrador' : 'Operador' }}</span>
             </div>
           }
-
           <button class="sair-btn" (click)="signOut()" aria-label="Sair" title="Sair">
             <mat-icon>logout</mat-icon>
-            <span>Sair</span>
           </button>
         </div>
       </mat-sidenav>
@@ -76,9 +76,8 @@ const NAV_ITEMS: NavItem[] = [
             <button mat-icon-button (click)="sidenav.toggle()" aria-label="Abrir menu">
               <mat-icon>menu</mat-icon>
             </button>
-            <div class="mobile-logo-plate">
-              <img src="logo.png" alt="Galeto do Fofão" class="mobile-logo" />
-            </div>
+            <img src="favicon.png" alt="" class="mobile-mark" />
+            <span class="mobile-name">Galeto do Fofão</span>
           </div>
         }
 
@@ -94,124 +93,173 @@ const NAV_ITEMS: NavItem[] = [
       background: var(--brand-background);
     }
     .sidebar {
-      width: 248px;
+      width: 260px;
       display: flex;
       flex-direction: column;
       background: var(--brand-primary);
       padding: 0;
-      box-shadow: 2px 0 8px rgba(28, 74, 99, 0.15);
     }
+
+    /* marca — ícone da identidade (mesmo azul do fundo, some no fundo) + nome em texto */
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 22px 20px 18px;
+      flex: 0 0 auto;
+    }
+    .brand-mark {
+      height: 30px;
+      width: 30px;
+      border-radius: 7px;
+      display: block;
+      flex: none;
+    }
+    .brand-name {
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* navegação — itens alinhados à esquerda, sem fundo próprio fora dos estados */
     .sidebar-nav {
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: stretch;
-      gap: 4px;
-      padding: 24px 16px;
+      gap: 2px;
+      padding: 8px 12px;
       flex: 1 1 auto;
       overflow-y: auto;
     }
     .nav-item {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 12px;
-      padding: 11px 14px;
-      border-radius: 10px;
-      color: rgba(255, 255, 255, 0.82);
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.72);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 500;
+      position: relative;
       transition: background 0.15s ease, color 0.15s ease;
     }
     .nav-item mat-icon {
       font-size: 20px;
       width: 20px;
       height: 20px;
+      flex: none;
     }
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    .nav-item:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.85);
+      outline-offset: -2px;
       color: #fff;
     }
     .nav-item-active {
-      background: #fff;
-      color: var(--brand-primary-dark);
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
       font-weight: 600;
-      box-shadow: 0 2px 6px rgba(28, 74, 99, 0.25);
     }
-    .sidebar-footer {
+    .nav-item-active::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--brand-amber);
+    }
+    .nav-item[aria-disabled='true'] {
+      color: rgba(255, 255, 255, 0.35);
+      pointer-events: none;
+    }
+
+    /* conta do usuário — mesmo fundo da sidebar, só um separador sutil */
+    .sidebar-account {
       display: flex;
-      flex-direction: column;
       align-items: center;
       gap: 10px;
-      padding: 20px 16px 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      text-align: center;
+      padding: 14px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      flex: 0 0 auto;
     }
-    .logo-plate {
-      background: #fff;
-      border-radius: 14px;
-      padding: 10px 16px;
+    .account-avatar {
+      flex: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 6px rgba(28, 74, 99, 0.2);
-    }
-    .logo-plate img {
-      height: 36px;
-      width: auto;
-      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
     }
     .user-info {
       display: flex;
       flex-direction: column;
-      align-items: center;
       overflow: hidden;
-      max-width: 100%;
+      flex: 1 1 auto;
+      min-width: 0;
     }
     .user-name {
-      font-size: 0.85rem;
+      font-size: 0.825rem;
       font-weight: 600;
       color: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 100%;
     }
     .user-role {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.65);
     }
     .sair-btn {
+      flex: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.75);
       border: none;
       border-radius: 8px;
-      padding: 7px 16px;
-      font-size: 0.8rem;
-      font-weight: 500;
       cursor: pointer;
-      transition: background 0.15s ease;
+      transition: background 0.15s ease, color 0.15s ease;
     }
     .sair-btn:hover {
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .sair-btn:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.85);
+      outline-offset: 1px;
     }
     .sair-btn mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
     }
+
     .mobile-bar {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 8px 16px;
       background: var(--brand-primary);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       position: sticky;
       top: 0;
       z-index: 5;
@@ -219,22 +267,27 @@ const NAV_ITEMS: NavItem[] = [
     .mobile-bar ::ng-deep .mat-mdc-icon-button {
       color: #fff;
     }
-    .mobile-logo-plate {
-      background: #fff;
-      border-radius: 10px;
-      padding: 4px 10px;
-      display: flex;
-      align-items: center;
-    }
-    .mobile-logo {
+    .mobile-mark {
       height: 24px;
-      width: auto;
+      width: 24px;
+      border-radius: 6px;
       display: block;
     }
+    .mobile-name {
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
     .app-content {
-      padding: 24px;
+      padding: 24px 20px;
       min-height: 100%;
       box-sizing: border-box;
+    }
+    @media (min-width: 900px) {
+      .app-content {
+        padding: 32px 40px;
+      }
     }
     @media (max-width: 640px) {
       .app-content {
