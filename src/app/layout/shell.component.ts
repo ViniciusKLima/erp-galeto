@@ -36,8 +36,7 @@ const NAV_ITEMS: NavItem[] = [
         class="sidebar"
       >
         <div class="sidebar-brand">
-          <img src="favicon.png" alt="" class="brand-mark" />
-          <span class="brand-name">Galeto do Fofão</span>
+          <img src="logo.png" alt="Galeto do Fofão" class="brand-mark" />
         </div>
 
         <nav class="sidebar-nav">
@@ -76,8 +75,7 @@ const NAV_ITEMS: NavItem[] = [
             <button mat-icon-button (click)="sidenav.toggle()" aria-label="Abrir menu">
               <mat-icon>menu</mat-icon>
             </button>
-            <img src="favicon.png" alt="" class="mobile-mark" />
-            <span class="mobile-name">Galeto do Fofão</span>
+            <img src="logo.png" alt="Galeto do Fofão" class="mobile-mark" />
           </div>
         }
 
@@ -100,38 +98,32 @@ const NAV_ITEMS: NavItem[] = [
       padding: 0;
     }
 
-    /* marca — ícone da identidade (mesmo azul do fundo, some no fundo) + nome em texto */
+    /* marca — logo real da identidade, convertido para branco sólido via filtro
+       (o arquivo original tem letras azuis, que sumiriam no fundo azul da sidebar;
+       sem filtro precisaria de uma caixa branca atrás, que é o que não queremos aqui) */
     .sidebar-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 22px 20px 18px;
+      justify-content: center;
+      padding: 26px 20px 20px;
       flex: 0 0 auto;
     }
     .brand-mark {
-      height: 30px;
-      width: 30px;
-      border-radius: 7px;
+      width: 100%;
+      max-width: 150px;
+      height: auto;
       display: block;
-      flex: none;
-    }
-    .brand-name {
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      line-height: 1.15;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      filter: brightness(0) invert(1);
     }
 
-    /* navegação — itens alinhados à esquerda, sem fundo próprio fora dos estados */
+    /* navegação — itens alinhados à esquerda, centralizada verticalmente no espaço
+       disponível entre a marca e a conta, sem fundo próprio fora dos estados */
     .sidebar-nav {
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      gap: 2px;
+      justify-content: center;
+      gap: 4px;
       padding: 8px 12px;
       flex: 1 1 auto;
       overflow-y: auto;
@@ -268,15 +260,10 @@ const NAV_ITEMS: NavItem[] = [
       color: #fff;
     }
     .mobile-mark {
-      height: 24px;
-      width: 24px;
-      border-radius: 6px;
+      height: 26px;
+      width: auto;
       display: block;
-    }
-    .mobile-name {
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 700;
+      filter: brightness(0) invert(1);
     }
 
     .app-content {
