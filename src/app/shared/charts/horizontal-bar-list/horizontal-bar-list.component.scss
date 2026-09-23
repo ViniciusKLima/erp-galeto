@@ -1,0 +1,38 @@
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.linha {
+  display: grid;
+  grid-template-columns: minmax(90px, 140px) 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+.rotulo {
+  font-size: 0.85rem;
+  color: var(--brand-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trilho {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--brand-background);
+  overflow: hidden;
+}
+.barra {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--brand-primary);
+}
+.valor {
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.vazio {
+  color: var(--brand-ink-muted);
+  font-size: 0.9rem;
+}

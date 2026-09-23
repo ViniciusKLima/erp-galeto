@@ -1,0 +1,20 @@
+<div class="legenda">
+  <span><i class="dot dot-receita"></i> Receita</span>
+  <span><i class="dot dot-despesa"></i> Despesa</span>
+</div>
+
+@if (bucketsSignal().length === 0) {
+  <p class="vazio">Sem dados para o período selecionado.</p>
+} @else {
+  <div class="chart">
+    @for (b of bucketsSignal(); track b.label) {
+      <div class="bucket" [title]="b.label + ': ' + (b.receita | currency: 'BRL') + ' / ' + (b.despesa | currency: 'BRL')">
+        <div class="bars">
+          <div class="bar bar-receita" [style.height.%]="percentual(b.receita)"></div>
+          <div class="bar bar-despesa" [style.height.%]="percentual(b.despesa)"></div>
+        </div>
+        <span class="bucket-label">{{ b.label }}</span>
+      </div>
+    }
+  </div>
+}

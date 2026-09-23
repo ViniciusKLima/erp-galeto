@@ -1,0 +1,8 @@
+<div class="empty-state">
+  <mat-icon>{{ icon }}</mat-icon>
+  <h3>{{ title }}</h3>
+  @if (description) {
+    <p>{{ description }}</p>
+  }
+  <ng-content select="[action]" />
+</div>

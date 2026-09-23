@@ -1,0 +1,30 @@
+<form [formGroup]="form" class="period-filter">
+  <mat-form-field appearance="outline" class="preset-field">
+    <mat-label>Período</mat-label>
+    <mat-select formControlName="preset" (selectionChange)="onPresetChange()">
+      <mat-option value="hoje">Hoje</mat-option>
+      <mat-option value="semana">Esta semana</mat-option>
+      <mat-option value="mes">Este mês</mat-option>
+      <mat-option value="30d">Últimos 30 dias</mat-option>
+      <mat-option value="90d">Últimos 90 dias</mat-option>
+      <mat-option value="ano">Este ano</mat-option>
+      <mat-option value="personalizado">Personalizado</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  @if (form.controls.preset.value === 'personalizado') {
+    <mat-form-field appearance="outline">
+      <mat-label>De</mat-label>
+      <input matInput [matDatepicker]="pickerDe" formControlName="dataInicio" (dateChange)="emitir()" />
+      <mat-datepicker-toggle matSuffix [for]="pickerDe" />
+      <mat-datepicker #pickerDe />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Até</mat-label>
+      <input matInput [matDatepicker]="pickerAte" formControlName="dataFim" (dateChange)="emitir()" />
+      <mat-datepicker-toggle matSuffix [for]="pickerAte" />
+      <mat-datepicker #pickerAte />
+    </mat-form-field>
+  }
+</form>

@@ -19,35 +19,8 @@ const STATUS_CONFIG: Record<string, { label: string; variant: Variant }> = {
 @Component({
   selector: 'app-status-badge',
   standalone: true,
-  template: `<span class="badge" [class]="'badge-' + variante()">{{ rotulo() }}</span>`,
-  styles: `
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .badge-success {
-      background: var(--color-success-bg);
-      color: var(--color-success);
-    }
-    .badge-danger {
-      background: var(--color-danger-bg);
-      color: var(--color-danger);
-    }
-    .badge-warning {
-      background: var(--color-warning-bg);
-      color: var(--color-warning);
-    }
-    .badge-neutral {
-      background: var(--color-neutral-bg);
-      color: var(--color-neutral);
-      text-decoration: line-through;
-    }
-  `,
+  templateUrl: './status-badge.component.html',
+  styleUrl: './status-badge.component.scss',
 })
 export class StatusBadgeComponent {
   private readonly statusSignal = signal('');

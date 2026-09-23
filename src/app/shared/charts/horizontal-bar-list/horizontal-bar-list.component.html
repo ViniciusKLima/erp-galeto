@@ -1,0 +1,15 @@
+@if (itensSignal().length === 0) {
+  <p class="vazio">Sem dados para o período selecionado.</p>
+} @else {
+  <div class="lista">
+    @for (item of itensSignal(); track item.label) {
+      <div class="linha">
+        <span class="rotulo">{{ item.label }}</span>
+        <div class="trilho">
+          <div class="barra" [style.width.%]="percentual(item.valor)"></div>
+        </div>
+        <span class="valor">{{ item.valor | currency: 'BRL' }}</span>
+      </div>
+    }
+  </div>
+}

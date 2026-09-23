@@ -16,8 +16,8 @@ import { PageHeaderComponent } from '../../shared/page-header/page-header.compon
 import { StatusBadgeComponent } from '../../shared/status-badge/status-badge.component';
 import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
 import { PeriodFilterComponent, PeriodoSelecionado } from '../../shared/period-filter/period-filter.component';
-import { HorizontalBarListComponent, BarItem } from '../../shared/charts/horizontal-bar-list.component';
-import { TimeSeriesBarsComponent, BucketSerie } from '../../shared/charts/time-series-bars.component';
+import { HorizontalBarListComponent, BarItem } from '../../shared/charts/horizontal-bar-list/horizontal-bar-list.component';
+import { TimeSeriesBarsComponent, BucketSerie } from '../../shared/charts/time-series-bars/time-series-bars.component';
 import { Tables } from '../../core/types/database.types';
 
 function diasEntre(inicioIso: string, fimIso: string): number {
