@@ -59,3 +59,13 @@ A regra global do redesign ("todo botão Adicionar/Novo abre modal") foi aplicad
 ## 10. Deploy — resolvido: GitHub conectado ao Vercel
 
 **Status:** resolvido. O deploy manual de arquivo por arquivo (`deploy_to_vercel`) não era confiável para um projeto deste tamanho — tentei consolidar os ~41 arquivos numa única chamada repetidas vezes e cada tentativa acabava levando só um subconjunto, sem aviso de erro (reportei isso como problema da ferramenta). A solução foi conectar o repositório GitHub (`ViniciusKLima/erp-galeto`) diretamente ao projeto Vercel — agora cada `git push` faz o Vercel buildar do código-fonte completo, sem o problema de upload parcial. Confirmado funcionando: `https://galetodofofao.vercel.app` responde com o app completo, refletindo o último commit.
+
+## 11. Site em branco no Vercel — causa: projeto Supabase pausado por inatividade (plano free)
+
+No plano gratuito, o Supabase pausa o projeto automaticamente depois de um período sem uso (`status` vira `INACTIVE`). Quando isso acontece, toda chamada à API do Supabase (inclusive `auth/v1/token`, usado para renovar a sessão de login) responde `503`, e como o app tenta renovar a sessão logo na inicialização, ele fica preso num loop de retry e a tela nunca sai do branco (só a cor de fundo aparece, porque o CSS carrega normalmente — o problema é 100% no runtime, não no build/deploy).
+
+**Diagnóstico**: abrir o site, olhar o console do navegador — o erro característico é `TypeError: Failed to fetch` repetindo a cada poucos segundos, e a aba de rede mostra `503` em `https://<project-ref>.supabase.co/auth/v1/token?grant_type=refresh_token`.
+
+**Correção**: reativar o projeto (no dashboard do Supabase, ou via `restore_project` pela integração MCP) e aguardar o status passar de `COMING_UP` para `ACTIVE_HEALTHY` (leva de 30s a poucos minutos) — depois disso o site volta a funcionar normalmente, sem precisar de nenhum redeploy.
+
+**Preciso saber de você**: isso vai voltar a acontecer sempre que o projeto ficar muitos dias sem uso, e nem eu nem você recebemos aviso automático — só percebe quem tentar acessar o site e ver a tela branca. Vale a pena configurar algo para manter o projeto "aquecido" (ex.: um cron gratuito batendo num endpoint a cada poucos dias) ou aceitar que, quando isso acontecer, a solução é sempre a mesma (reativar e esperar)?

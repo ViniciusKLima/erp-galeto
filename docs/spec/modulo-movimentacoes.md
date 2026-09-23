@@ -1,31 +1,32 @@
-# Módulo — Movimentações (implementado)
+# Módulo — Movimentações (implementado, referência de padrão)
 
-Único módulo com fluxo completo hoje. Serve de padrão de código para os próximos (mesma estrutura de pastas, mesmo estilo de service/dialog).
+Módulo mais completo do sistema, reconstruído na etapa 2 do redesign visual (`.claude/reestrutura-visual.md`). Serve de padrão de código para os próximos módulos (mesma estrutura de pastas, mesmo estilo de service/dialog, mesmos componentes compartilhados).
 
 ## Onde está o código
 
 ```
 src/app/features/movimentacoes/
-  movimentacoes.service.ts       — toda comunicação com Supabase (tabelas + RPCs)
-  movimentacoes-list.page.ts     — tela principal: tabela + ações
-  movimentacao-form.dialog.ts    — formulário de criação (simples ou parcelada)
-  liquidacao-form.dialog.ts      — formulário de registrar pagamento/recebimento (total ou parcial)
+  movimentacoes.service.ts          — toda comunicação com Supabase (tabelas + RPCs), incluindo transferências
+  movimentacoes-list.page.ts        — tela principal: busca, filtros, tabela, menu de ações por linha, mini-lista de transferências
+  movimentacao-form.dialog.ts       — modal de criação/edição — três tipos num único formulário: receita, despesa ou transferência
+  movimentacao-detail.dialog.ts     — drawer de detalhes (dialog docado à direita) ao clicar numa linha
+  liquidacao-form.dialog.ts         — registrar pagamento/recebimento (total ou parcial)
+  parcelas.dialog.ts                — liquidar parcela individual de uma movimentação parcelada
+  cancelar-movimentacao.dialog.ts   — cancelar com motivo, preservando histórico
 ```
 
 ## O que funciona
 
-- Login (Supabase Auth) → guard de rota → shell com menu lateral.
-- Listar movimentações (mais recentes primeiro), com tipo, valor, pago/recebido e status visíveis na tabela.
-- Criar movimentação simples (receita ou despesa): categoria filtrada por tipo, subcategoria filtrada por categoria, forma de pagamento, contraparte e ciclo opcionais.
-- Criar movimentação parcelada: mesmo formulário, com quantidade de parcelas e vencimento da 1ª — a função `criar_movimentacao_parcelada` cria a movimentação e todas as parcelas de uma vez.
-- Liquidar (botão "Liquidar" em item pendente não parcelado): abre diálogo pedindo valor, data e conta financeira — aceita valor menor que o total pendente (liquidação parcial, ex.: venda fiada).
-- Dashboard: cards de receita/despesa/resultado do mês, saldo por conta, total a pagar/receber.
+- Login (Supabase Auth) → guard de rota → shell com sidebar (identidade "Galeto do Fofão").
+- Listar movimentações com busca por descrição e filtros completos: tipo, categoria, status, ciclo, forma de pagamento, período (via `app-period-filter` compartilhado).
+- Criar movimentação simples (receita ou despesa) ou parcelada (`criar_movimentacao_parcelada` cria a movimentação e todas as parcelas de uma vez) — categoria filtrada por tipo, subcategoria filtrada por categoria, forma de pagamento, contraparte e ciclo opcionais.
+- Criar transferência entre contas próprias no mesmo modal (`criarTransferencia`) — aparece numa mini-lista separada abaixo da tabela principal, não na tabela de receita/despesa (ver `decisoes-abertas.md` item 8, é uma simplificação consciente pendente de confirmação).
+- Editar movimentação simples pendente.
+- Liquidar total ou parcial (inclusive parcela por parcela) — aceita valor menor que o pendente (venda fiada), não aceita valor maior.
+- Cancelar com motivo, preservando histórico; regras de quem pode cancelar em `decisoes-abertas.md` item 4.
+- Drawer de detalhes ao clicar numa linha, com todas as informações e ações da movimentação.
 
-## Atualização — lacunas fechadas
+## O que ainda falta (menor prioridade, ver `roadmap.md`)
 
-Liquidação de parcela individual (`parcelas.dialog.ts`), cancelamento pela UI (`cancelar-movimentacao.dialog.ts`), filtro por tipo/status/período e edição de movimentação simples pendente (`movimentacao-form.dialog.ts` agora aceita um registro existente) já estão implementados.
-
-## O que ainda falta (menor prioridade)
-
-- Filtro por categoria e por ciclo na listagem (o service já aceita via `MovimentacaoFiltro`, falta o campo no formulário).
-- Paginação/ordenação da tabela — hoje carrega tudo de uma vez, aceitável para o volume inicial de uma galeteria, mas vai precisar antes de crescer muito.
+- Paginação/ordenação da tabela — hoje carrega tudo de uma vez, aceitável para o volume atual de uma galeteria, mas vai precisar antes de crescer muito.
+- Transferências misturadas na mesma tabela cronológica das movimentações (hoje é uma mini-lista à parte) — mudança de estrutura de dados, não só visual.

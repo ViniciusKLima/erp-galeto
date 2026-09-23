@@ -20,19 +20,23 @@ A prioridade é que os dados registrados representem corretamente a operação r
 
 ## Ordem recomendada
 
-1. `contexto-projeto.md`
-2. `regras-financeiras.md`
-3. `fluxos-do-sistema.md`
-4. `banco-de-dados.md`
-5. `autenticacao-e-permissoes.md`
-6. Skills específicas de cada módulo
-7. `dashboard-e-metricas.md`
-8. `ux-ui.md`
-9. `padroes-de-desenvolvimento.md`
-10. `stack-tecnologico.md`
-11. `supabase-e-seguranca.md`
-12. `angular-padroes.md`
-13. `deploy-e-hospedagem.md`
+1. `contexto-negocio-galeteria-claude.md` — como a galeteria realmente opera (ciclo semanal, vendas fiadas, compras a crédito). Leia antes de tudo: é a base de todas as regras financeiras abaixo.
+2. `contexto-projeto.md`
+3. `regras-financeiras.md`
+4. `fluxos-do-sistema.md`
+5. `banco-de-dados.md`
+6. `autenticacao-e-permissoes.md`
+7. Skills específicas de cada módulo
+8. `dashboard-e-metricas.md`
+9. `ux-ui.md`
+10. `padroes-de-desenvolvimento.md`
+11. `stack-tecnologico.md`
+12. `supabase-e-seguranca.md`
+13. `angular-padroes.md`
+14. `deploy-e-hospedagem.md`
+15. `reestrutura-visual.md` — spec original do redesign visual já aplicado (identidade "Galeto do Fofão"); leia se for mexer em qualquer tela para entender o porquê das escolhas visuais atuais.
+
+Depois dessas skills, leia `docs/spec/README.md` para saber o que já está implementado e o que falta.
 
 ## Stack técnica
 
