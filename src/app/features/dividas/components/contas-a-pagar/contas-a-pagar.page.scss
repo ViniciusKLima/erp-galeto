@@ -1,0 +1,20 @@
+.total-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.total-label {
+  color: var(--brand-ink-muted);
+  font-size: 0.9rem;
+}
+.total-valor {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.full-width {
+  width: 100%;
+}
+.valor-cell {
+  font-weight: 600;
+}

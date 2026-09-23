@@ -27,7 +27,7 @@ export const routes: Routes = [
       },
       {
         path: 'dividas',
-        loadComponent: () => import('./features/dividas/dividas-hub.page').then((m) => m.DividasHubPage),
+        loadComponent: () => import('./features/dividas/pages/dividas-hub/dividas-hub.page').then((m) => m.DividasHubPage),
       },
       {
         path: 'relatorios',

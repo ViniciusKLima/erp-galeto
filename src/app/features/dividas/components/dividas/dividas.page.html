@@ -1,0 +1,53 @@
+<div class="tab-actions">
+  <button mat-flat-button color="primary" (click)="novaDivida()">
+    <mat-icon>add</mat-icon>
+    Nova dívida
+  </button>
+</div>
+
+@if (dividas().length === 0) {
+  <app-empty-state
+    icon="account_balance_wallet"
+    title="Nenhuma dívida registrada"
+    description="Registre dívidas com fornecedores e outros credores para acompanhar o que ainda precisa ser pago."
+  >
+    <button mat-flat-button color="primary" action (click)="novaDivida()">+ Nova dívida</button>
+  </app-empty-state>
+} @else {
+  <table mat-table [dataSource]="dividas()" class="full-width">
+    <ng-container matColumnDef="descricao">
+      <th mat-header-cell *matHeaderCellDef>Descrição</th>
+      <td mat-cell *matCellDef="let d">{{ d.description }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="credor">
+      <th mat-header-cell *matHeaderCellDef>Credor</th>
+      <td mat-cell *matCellDef="let d">{{ nomeCredor(d.creditor_id) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="valor">
+      <th mat-header-cell *matHeaderCellDef>Valor total</th>
+      <td mat-cell *matCellDef="let d">{{ d.total_amount | currency: 'BRL' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="inicio">
+      <th mat-header-cell *matHeaderCellDef>Início</th>
+      <td mat-cell *matCellDef="let d">{{ d.start_date | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let d"><app-status-badge [status]="statusChave(d.status)" /></td>
+    </ng-container>
+
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let d">
+        <button mat-button (click)="verParcelas(d)">Ver parcelas</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+    <tr mat-row *matRowDef="let row; columns: colunas"></tr>
+  </table>
+}
