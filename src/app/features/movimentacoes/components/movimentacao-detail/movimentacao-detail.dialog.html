@@ -1,0 +1,64 @@
+<div class="drawer">
+  <div class="drawer-header">
+    <button mat-icon-button mat-dialog-close aria-label="Fechar">
+      <mat-icon>close</mat-icon>
+    </button>
+    <h2>Detalhes da movimentação</h2>
+  </div>
+
+  <div class="drawer-body">
+    <p class="tipo" [class.text-success]="m.type === 'income'" [class.text-danger]="m.type === 'expense'">
+      {{ m.type === 'income' ? 'Receita' : 'Despesa' }}
+    </p>
+    <p class="valor">{{ m.amount | currency: 'BRL' }}</p>
+    <app-status-badge [status]="m.status" />
+
+    <dl class="campos">
+      <dt>Descrição</dt>
+      <dd>{{ m.description }}</dd>
+
+      <dt>Data</dt>
+      <dd>{{ m.transaction_date | date: 'dd/MM/yyyy' }}</dd>
+
+      @if (m.due_date) {
+        <dt>Vencimento</dt>
+        <dd>{{ m.due_date | date: 'dd/MM/yyyy' }}</dd>
+      }
+
+      <dt>Categoria</dt>
+      <dd>{{ nomeCategoria() }}</dd>
+
+      @if (m.subcategory_id) {
+        <dt>Subcategoria</dt>
+        <dd>{{ nomeSubcategoria() }}</dd>
+      }
+
+      <dt>Forma de pagamento</dt>
+      <dd>{{ nomeFormaPagamento() }}</dd>
+
+      @if (m.counterparty_id) {
+        <dt>Entidade</dt>
+        <dd>{{ nomeContato() }}</dd>
+      }
+
+      @if (m.cycle_id) {
+        <dt>Ciclo</dt>
+        <dd>{{ nomeCiclo() }}</dd>
+      }
+
+      <dt>Pago/Recebido</dt>
+      <dd>{{ m.paid_amount | currency: 'BRL' }}</dd>
+
+      @if (m.notes) {
+        <dt>Observação</dt>
+        <dd>{{ m.notes }}</dd>
+      }
+    </dl>
+  </div>
+
+  <div class="drawer-footer">
+    @if (m.status === 'pendente' && !m.is_installment) {
+      <button mat-flat-button color="primary" (click)="editar()">Editar</button>
+    }
+  </div>
+</div>

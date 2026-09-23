@@ -1,0 +1,160 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Editar movimentação' : 'Nova movimentação' }}</h2>
+<p class="subtitle" mat-dialog-subtitle>Preencha os dados abaixo</p>
+<form [formGroup]="form" (ngSubmit)="salvar(true)">
+  <mat-dialog-content>
+    @if (!isEditing) {
+      <mat-button-toggle-group formControlName="type" class="full-width tipo-toggle" (change)="onTipoChange()">
+        <mat-button-toggle value="income">Receita</mat-button-toggle>
+        <mat-button-toggle value="expense">Despesa</mat-button-toggle>
+        <mat-button-toggle value="transfer">Transferência</mat-button-toggle>
+      </mat-button-toggle-group>
+    }
+
+    @if (form.controls.type.value === 'transfer') {
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Conta de origem</mat-label>
+          <mat-select formControlName="source_account_id">
+            @for (conta of contas(); track conta.id) {
+              <mat-option [value]="conta.id">{{ conta.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Conta de destino</mat-label>
+          <mat-select formControlName="destination_account_id">
+            @for (conta of contas(); track conta.id) {
+              <mat-option [value]="conta.id">{{ conta.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Valor (R$)</mat-label>
+          <input matInput type="number" step="0.01" min="0.01" formControlName="transfer_amount" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Data</mat-label>
+          <input matInput [matDatepicker]="pickerTransfer" formControlName="transfer_date" />
+          <mat-datepicker-toggle matSuffix [for]="pickerTransfer" />
+          <mat-datepicker #pickerTransfer />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>Observações</mat-label>
+          <textarea matInput formControlName="transfer_notes" rows="2"></textarea>
+        </mat-form-field>
+      </div>
+      <p class="hint">Transferência entre contas próprias — não altera receita, despesa nem resultado.</p>
+    } @else {
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Data</mat-label>
+          <input matInput [matDatepicker]="pickerData" formControlName="transaction_date" />
+          <mat-datepicker-toggle matSuffix [for]="pickerData" />
+          <mat-datepicker #pickerData />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ciclo (opcional)</mat-label>
+          <mat-select formControlName="cycle_id">
+            <mat-option [value]="null">—</mat-option>
+            @for (ciclo of ciclos(); track ciclo.id) {
+              <mat-option [value]="ciclo.id">{{ ciclo.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>Descrição</mat-label>
+          <input matInput formControlName="description" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="category_id" (selectionChange)="onCategoriaChange($event.value)">
+            @for (categoria of categorias(); track categoria.id) {
+              <mat-option [value]="categoria.id">{{ categoria.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (subcategorias().length > 0) {
+          <mat-form-field appearance="outline">
+            <mat-label>Subcategoria</mat-label>
+            <mat-select formControlName="subcategory_id">
+              @for (sub of subcategorias(); track sub.id) {
+                <mat-option [value]="sub.id">{{ sub.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline">
+          <mat-label>Valor (R$)</mat-label>
+          <input matInput type="number" step="0.01" min="0.01" formControlName="amount" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Forma de pagamento</mat-label>
+          <mat-select formControlName="payment_method_id">
+            @for (fp of formasPagamento(); track fp.id) {
+              <mat-option [value]="fp.id">{{ fp.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Entidade (opcional)</mat-label>
+          <mat-select formControlName="counterparty_id">
+            <mat-option [value]="null">—</mat-option>
+            @for (contato of contatos(); track contato.id) {
+              <mat-option [value]="contato.id">{{ contato.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (!isEditing) {
+          <div class="parcelado-field">
+            <mat-checkbox formControlName="is_installment">Parcelado</mat-checkbox>
+          </div>
+        }
+
+        @if (form.controls.is_installment.value) {
+          <mat-form-field appearance="outline">
+            <mat-label>Quantidade de parcelas</mat-label>
+            <input matInput type="number" min="2" formControlName="installments_total" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Vencimento da 1ª parcela</mat-label>
+            <input matInput [matDatepicker]="pickerParcela" formControlName="first_due_date" />
+            <mat-datepicker-toggle matSuffix [for]="pickerParcela" />
+            <mat-datepicker #pickerParcela />
+          </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>Observações</mat-label>
+          <textarea matInput formControlName="notes" rows="2"></textarea>
+        </mat-form-field>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Cancelar</button>
+    @if (!isEditing) {
+      <button mat-stroked-button type="button" [disabled]="saving()" (click)="salvar(false)">
+        Salvar e continuar
+      </button>
+    }
+    <button mat-flat-button color="primary" type="submit" [disabled]="saving()">Salvar</button>
+  </mat-dialog-actions>
+</form>

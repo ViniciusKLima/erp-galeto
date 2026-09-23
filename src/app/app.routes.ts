@@ -19,7 +19,7 @@ export const routes: Routes = [
       {
         path: 'movimentacoes',
         loadComponent: () =>
-          import('./features/movimentacoes/movimentacoes-list.page').then((m) => m.MovimentacoesListPage),
+          import('./features/movimentacoes/pages/movimentacoes-list/movimentacoes-list.page').then((m) => m.MovimentacoesListPage),
       },
       {
         path: 'estoque',

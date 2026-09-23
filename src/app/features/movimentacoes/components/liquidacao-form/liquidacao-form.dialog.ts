@@ -8,8 +8,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MovimentacoesService } from './movimentacoes.service';
-import { Tables } from '../../core/types/database.types';
+import { MovimentacoesService } from '../../movimentacoes.service';
+import { Tables } from '../../../../core/types/database.types';
 
 export type LiquidacaoDialogData = {
   transactionId: string;
@@ -31,55 +31,8 @@ export type LiquidacaoDialogData = {
     MatDatepickerModule,
     MatNativeDateModule,
   ],
-  template: `
-    <h2 mat-dialog-title>Registrar liquidação</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-dialog-content>
-        <p>Saldo pendente: {{ data.valorPendente | number: '1.2-2' }}</p>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Valor recebido/pago agora (R$)</mat-label>
-          <input matInput type="number" step="0.01" min="0.01" [max]="data.valorPendente" formControlName="amount" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Data</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="settled_at" />
-          <mat-datepicker-toggle matSuffix [for]="picker" />
-          <mat-datepicker #picker />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Conta financeira</mat-label>
-          <mat-select formControlName="financial_account_id">
-            @for (conta of contas(); track conta.id) {
-              <mat-option [value]="conta.id">{{ conta.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        @if (errorMessage()) {
-          <p class="error">{{ errorMessage() }}</p>
-        }
-      </mat-dialog-content>
-
-      <mat-dialog-actions align="end">
-        <button mat-button type="button" mat-dialog-close>Cancelar</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">Confirmar</button>
-      </mat-dialog-actions>
-    </form>
-  `,
-  styles: `
-    .full-width {
-      width: 100%;
-      margin-bottom: 12px;
-      display: block;
-    }
-    .error {
-      color: var(--color-danger);
-      font-size: 0.85rem;
-    }
-  `,
+  templateUrl: './liquidacao-form.dialog.html',
+  styleUrl: './liquidacao-form.dialog.scss',
 })
 export class LiquidacaoFormDialog implements OnInit {
   private readonly fb = inject(FormBuilder);

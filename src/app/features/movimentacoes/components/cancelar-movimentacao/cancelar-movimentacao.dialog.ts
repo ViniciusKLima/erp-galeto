@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MovimentacoesService } from './movimentacoes.service';
+import { MovimentacoesService } from '../../movimentacoes.service';
 
 export type CancelarMovimentacaoDialogData = {
   transactionId: string;
@@ -15,42 +15,8 @@ export type CancelarMovimentacaoDialogData = {
   selector: 'app-cancelar-movimentacao-dialog',
   standalone: true,
   imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>Cancelar movimentação</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-dialog-content>
-        <p>
-          "{{ data.descricao }}" será marcada como cancelada. O histórico é preservado — nenhum valor já
-          recebido/pago é apagado.
-        </p>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Motivo do cancelamento</mat-label>
-          <textarea matInput formControlName="motivo" rows="3"></textarea>
-        </mat-form-field>
-
-        @if (errorMessage()) {
-          <p class="error">{{ errorMessage() }}</p>
-        }
-      </mat-dialog-content>
-
-      <mat-dialog-actions align="end">
-        <button mat-button type="button" mat-dialog-close>Voltar</button>
-        <button mat-flat-button color="warn" type="submit" [disabled]="form.invalid || saving()">
-          Confirmar cancelamento
-        </button>
-      </mat-dialog-actions>
-    </form>
-  `,
-  styles: `
-    .full-width {
-      width: 100%;
-    }
-    .error {
-      color: var(--color-danger);
-      font-size: 0.85rem;
-    }
-  `,
+  templateUrl: './cancelar-movimentacao.dialog.html',
+  styleUrl: './cancelar-movimentacao.dialog.scss',
 })
 export class CancelarMovimentacaoDialog {
   private readonly fb = inject(FormBuilder);

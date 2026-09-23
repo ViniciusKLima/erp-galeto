@@ -7,7 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DashboardService } from '../dashboard/dashboard.service';
 import { MovimentacoesService } from '../movimentacoes/movimentacoes.service';
-import { LiquidacaoFormDialog } from '../movimentacoes/liquidacao-form.dialog';
+import { LiquidacaoFormDialog } from '../movimentacoes/components/liquidacao-form/liquidacao-form.dialog';
 import { StatusBadgeComponent } from '../../shared/status-badge/status-badge.component';
 import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
 import { Tables } from '../../core/types/database.types';
