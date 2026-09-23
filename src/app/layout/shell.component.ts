@@ -36,7 +36,8 @@ const NAV_ITEMS: NavItem[] = [
         class="sidebar"
       >
         <div class="sidebar-brand">
-          <img src="logo.png" alt="Galeto do Fofão" class="brand-mark" />
+          <img src="favicon.png" alt="" class="brand-mark" />
+          <span class="brand-name">Galeto do Fofão</span>
         </div>
 
         <nav class="sidebar-nav">
@@ -75,7 +76,8 @@ const NAV_ITEMS: NavItem[] = [
             <button mat-icon-button (click)="sidenav.toggle()" aria-label="Abrir menu">
               <mat-icon>menu</mat-icon>
             </button>
-            <img src="logo.png" alt="Galeto do Fofão" class="mobile-mark" />
+            <img src="favicon.png" alt="" class="mobile-mark" />
+            <span class="mobile-name">Galeto do Fofão</span>
           </div>
         }
 
@@ -98,22 +100,34 @@ const NAV_ITEMS: NavItem[] = [
       padding: 0;
     }
 
-    /* marca — logo real da identidade, convertido para branco sólido via filtro
-       (o arquivo original tem letras azuis, que sumiriam no fundo azul da sidebar;
-       sem filtro precisaria de uma caixa branca atrás, que é o que não queremos aqui) */
+    /* marca — ícone da identidade (mesmo azul do fundo, some no fundo) + nome em texto.
+       Testamos usar logo.png inteiro em branco sólido (filtro brightness(0) invert(1)),
+       mas o desenho entrelaça o galo com as letras usando a própria cor pra separar as
+       formas — virou uma mancha ilegível quando achatado pra uma cor só. O ícone isolado
+       (favicon.png) é a mesma arte, sem esse problema. */
     .sidebar-brand {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 26px 20px 20px;
+      gap: 10px;
+      padding: 22px 20px 18px;
       flex: 0 0 auto;
     }
     .brand-mark {
-      width: 100%;
-      max-width: 150px;
-      height: auto;
+      height: 30px;
+      width: 30px;
+      border-radius: 7px;
       display: block;
-      filter: brightness(0) invert(1);
+      flex: none;
+    }
+    .brand-name {
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* navegação — itens alinhados à esquerda, centralizada verticalmente no espaço
@@ -260,10 +274,15 @@ const NAV_ITEMS: NavItem[] = [
       color: #fff;
     }
     .mobile-mark {
-      height: 26px;
-      width: auto;
+      height: 24px;
+      width: 24px;
+      border-radius: 6px;
       display: block;
-      filter: brightness(0) invert(1);
+    }
+    .mobile-name {
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
     }
 
     .app-content {
