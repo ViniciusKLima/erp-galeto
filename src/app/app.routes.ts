@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./layout/shell.component').then((m) => m.ShellComponent),
+    loadComponent: () => import('./layout/shell/shell.component').then((m) => m.ShellComponent),
     canActivate: [authGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
