@@ -5,39 +5,7 @@
     #sidenav
     class="sidebar"
   >
-    <div class="sidebar-brand">
-      <img src="favicon.png" alt="" class="brand-mark" />
-      <span class="brand-name">Galeto do Fofão</span>
-    </div>
-
-    <nav class="sidebar-nav">
-      @for (item of navItens; track item.path) {
-        @if (!item.adminOnly || auth.isAdmin()) {
-          <a
-            class="nav-item"
-            [routerLink]="item.path"
-            routerLinkActive="nav-item-active"
-            (click)="fecharNoMobile()"
-          >
-            <mat-icon>{{ item.icon }}</mat-icon>
-            <span>{{ item.label }}</span>
-          </a>
-        }
-      }
-    </nav>
-
-    <div class="sidebar-account">
-      @if (auth.profile(); as profile) {
-        <div class="account-avatar">{{ profile.name.charAt(0).toUpperCase() }}</div>
-        <div class="user-info">
-          <span class="user-name">{{ profile.name }}</span>
-          <span class="user-role">{{ profile.role === 'admin' ? 'Administrador' : 'Operador' }}</span>
-        </div>
-      }
-      <button class="sair-btn" (click)="signOut()" aria-label="Sair" title="Sair">
-        <mat-icon>logout</mat-icon>
-      </button>
-    </div>
+    <app-sidebar />
   </mat-sidenav>
 
   <mat-sidenav-content>
