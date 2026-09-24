@@ -31,7 +31,7 @@ export const routes: Routes = [
       },
       {
         path: 'relatorios',
-        loadComponent: () => import('./features/relatorios/relatorios.page').then((m) => m.RelatoriosPage),
+        loadComponent: () => import('./features/relatorios/pages/relatorios/relatorios.page').then((m) => m.RelatoriosPage),
       },
       {
         path: 'configuracoes',
