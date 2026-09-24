@@ -1,0 +1,186 @@
+<div class="page-shell">
+  <app-page-header title="Dashboard" subtitle="Visão geral da operação financeira." />
+
+  <div class="surface-card filtros-card">
+    <app-period-filter (periodoAlterado)="onPeriodoAlterado($event)" />
+
+    <mat-form-field appearance="outline" class="filtro-curto">
+      <mat-label>Ciclo</mat-label>
+      <mat-select [formControl]="filtroCiclo">
+        <mat-option [value]="null">Todos</mat-option>
+        @for (ciclo of ciclos(); track ciclo.id) {
+          <mat-option [value]="ciclo.id">{{ ciclo.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtro-curto">
+      <mat-label>Conta</mat-label>
+      <mat-select [formControl]="filtroConta" (selectionChange)="onContaChange()">
+        <mat-option [value]="null">Todas</mat-option>
+        @for (conta of contas(); track conta.id) {
+          <mat-option [value]="conta.id">{{ conta.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-expansion-panel class="filtros-avancados">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Filtros avançados</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="filtros-avancados-conteudo">
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select [formControl]="filtroCategoria">
+            <mat-option [value]="null">Todas</mat-option>
+            @for (categoria of categorias(); track categoria.id) {
+              <mat-option [value]="categoria.id">{{ categoria.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+
+    @if (filtroCiclo.value || filtroConta.value || filtroCategoria.value) {
+      <button mat-button (click)="limparFiltrosAdicionais()">
+        <mat-icon>close</mat-icon>
+        Limpar filtros
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <mat-spinner diameter="32" />
+  } @else {
+    <div class="cards-grid">
+      <mat-card class="stat-card">
+        <p class="label">Receita</p>
+        <p class="valor text-success">{{ receita() | currency: 'BRL' }}</p>
+        <p class="hint">Reconhecida no período</p>
+      </mat-card>
+      <mat-card class="stat-card">
+        <p class="label">Despesas</p>
+        <p class="valor text-danger">{{ despesa() | currency: 'BRL' }}</p>
+        <p class="hint">Reconhecidas no período</p>
+      </mat-card>
+      <mat-card class="stat-card">
+        <p class="label">Resultado</p>
+        <p class="valor" [class.text-success]="resultado() >= 0" [class.text-danger]="resultado() < 0">
+          {{ resultado() | currency: 'BRL' }}
+        </p>
+        <p class="hint">Receita − despesas reconhecidas</p>
+      </mat-card>
+      <mat-card class="stat-card destaque">
+        <p class="label">Saldo disponível</p>
+        <p class="valor">{{ saldoDisponivel() | currency: 'BRL' }}</p>
+        <p class="hint">{{ filtroConta.value ? 'Nesta conta' : 'Soma de todas as contas' }}</p>
+      </mat-card>
+    </div>
+
+    <div class="cards-grid">
+      <mat-card class="stat-card compact">
+        <p class="label">Entradas efetivas</p>
+        <p class="valor-sm text-success">{{ entradas() | currency: 'BRL' }}</p>
+      </mat-card>
+      <mat-card class="stat-card compact">
+        <p class="label">Saídas efetivas</p>
+        <p class="valor-sm text-danger">{{ saidas() | currency: 'BRL' }}</p>
+      </mat-card>
+      <mat-card class="stat-card compact clicavel" routerLink="/dividas">
+        <p class="label">A receber</p>
+        <p class="valor-sm">{{ totalAReceber() | currency: 'BRL' }}</p>
+      </mat-card>
+      <mat-card class="stat-card compact clicavel" routerLink="/dividas">
+        <p class="label">A pagar</p>
+        <p class="valor-sm">{{ totalAPagar() | currency: 'BRL' }}</p>
+      </mat-card>
+    </div>
+
+    <div class="surface-card">
+      <p class="section-title">Receita x Despesas</p>
+      <app-time-series-bars [buckets]="bucketsGrafico()" />
+    </div>
+
+    <div class="grid-2">
+      <div class="surface-card">
+        <p class="section-title">Despesas por categoria</p>
+        <app-horizontal-bar-list [itens]="despesasPorCategoria()" />
+      </div>
+      <div class="surface-card">
+        <p class="section-title">Receitas por categoria</p>
+        <app-horizontal-bar-list [itens]="receitasPorCategoria()" />
+      </div>
+    </div>
+
+    <div class="surface-card">
+      <p class="section-title">Resultado por ciclo</p>
+      @if (ultimosCiclos().length === 0) {
+        <app-empty-state
+          icon="calendar_view_week"
+          title="Nenhum ciclo cadastrado"
+          description="Cadastre ciclos semanais em Configurações para comparar o desempenho entre eles."
+        />
+      } @else {
+        <table mat-table [dataSource]="ultimosCiclos()" class="full-width">
+          <ng-container matColumnDef="ciclo">
+            <th mat-header-cell *matHeaderCellDef>Ciclo</th>
+            <td mat-cell *matCellDef="let c">{{ c.ciclo.label }}</td>
+          </ng-container>
+          <ng-container matColumnDef="receita">
+            <th mat-header-cell *matHeaderCellDef>Receita</th>
+            <td mat-cell *matCellDef="let c" class="text-success">{{ c.receita | currency: 'BRL' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="despesa">
+            <th mat-header-cell *matHeaderCellDef>Despesa</th>
+            <td mat-cell *matCellDef="let c" class="text-danger">{{ c.despesa | currency: 'BRL' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="resultado">
+            <th mat-header-cell *matHeaderCellDef>Resultado</th>
+            <td mat-cell *matCellDef="let c" [class.text-success]="c.receita - c.despesa >= 0" [class.text-danger]="c.receita - c.despesa < 0">
+              {{ c.receita - c.despesa | currency: 'BRL' }}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['ciclo', 'receita', 'despesa', 'resultado']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['ciclo', 'receita', 'despesa', 'resultado']"></tr>
+        </table>
+      }
+    </div>
+
+    <div class="surface-card">
+      <div class="section-header-row">
+        <p class="section-title">Movimentações recentes</p>
+        <a mat-button routerLink="/movimentacoes">Ver todas</a>
+      </div>
+      @if (recentes().length === 0) {
+        <app-empty-state icon="receipt_long" title="Nenhuma movimentação ainda" />
+      } @else {
+        <table mat-table [dataSource]="recentes()" class="full-width">
+          <ng-container matColumnDef="data">
+            <th mat-header-cell *matHeaderCellDef>Data</th>
+            <td mat-cell *matCellDef="let m">{{ m.transaction_date | date: 'dd/MM' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let m">{{ m.type === 'income' ? 'Receita' : 'Despesa' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="descricao">
+            <th mat-header-cell *matHeaderCellDef>Descrição</th>
+            <td mat-cell *matCellDef="let m">{{ m.description }}</td>
+          </ng-container>
+          <ng-container matColumnDef="valor">
+            <th mat-header-cell *matHeaderCellDef>Valor</th>
+            <td mat-cell *matCellDef="let m" [class.text-success]="m.type === 'income'" [class.text-danger]="m.type === 'expense'">
+              {{ m.amount | currency: 'BRL' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let m"><app-status-badge [status]="m.status" /></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['data', 'tipo', 'descricao', 'valor', 'status']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['data', 'tipo', 'descricao', 'valor', 'status']"></tr>
+        </table>
+      }
+    </div>
+  }
+</div>
