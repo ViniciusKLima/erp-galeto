@@ -1,0 +1,38 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-background);
+}
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  border-radius: 20px;
+  padding: 40px 32px;
+  box-sizing: border-box;
+  text-align: center;
+}
+.logo {
+  height: 56px;
+  margin-bottom: 8px;
+}
+.tagline {
+  margin: 0 0 28px;
+  color: var(--brand-ink-muted);
+  font-size: 0.9rem;
+}
+form {
+  text-align: left;
+}
+.full-width {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.error {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+  margin: 0 0 8px;
+}
