@@ -1,0 +1,22 @@
+.tab-content {
+  padding: 16px 4px;
+}
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.full-width {
+  width: 100%;
+}
+.error {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+}
+.hint {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.85rem;
+  margin-top: 8px;
+}

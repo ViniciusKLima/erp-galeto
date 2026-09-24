@@ -1,0 +1,288 @@
+<div class="page-shell">
+<app-page-header title="Configurações" subtitle="Categorias, contas, formas de pagamento, ciclos e usuários." />
+
+<div class="surface-card">
+<mat-tab-group>
+  <mat-tab label="Categorias">
+    <div class="tab-content">
+      <form [formGroup]="categoriaForm" (ngSubmit)="salvarCategoria()" class="inline-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="income">Receita</mat-option>
+            <mat-option value="expense">Despesa</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="categoriaForm.invalid">
+          {{ editandoCategoriaId() ? 'Salvar edição' : 'Adicionar' }}
+        </button>
+        @if (editandoCategoriaId()) {
+          <button mat-button type="button" (click)="cancelarEdicaoCategoria()">Cancelar</button>
+        }
+      </form>
+
+      <table mat-table [dataSource]="categorias()" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let c">{{ c.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let c">{{ c.type === 'income' ? 'Receita' : 'Despesa' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Ativa</th>
+          <td mat-cell *matCellDef="let c">
+            <mat-slide-toggle [checked]="c.active" (change)="alternarCategoria(c)" />
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let c">
+            <button mat-button (click)="editarCategoria(c)">Editar</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name', 'type', 'active', 'acoes']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'type', 'active', 'acoes']"></tr>
+      </table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Subcategorias">
+    <div class="tab-content">
+      <form [formGroup]="subcategoriaForm" (ngSubmit)="salvarSubcategoria()" class="inline-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="category_id">
+            @for (cat of categorias(); track cat.id) {
+              <mat-option [value]="cat.id">{{ cat.name }} ({{ cat.type === 'income' ? 'Receita' : 'Despesa' }})</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="subcategoriaForm.invalid">
+          {{ editandoSubcategoriaId() ? 'Salvar edição' : 'Adicionar' }}
+        </button>
+        @if (editandoSubcategoriaId()) {
+          <button mat-button type="button" (click)="cancelarEdicaoSubcategoria()">Cancelar</button>
+        }
+      </form>
+
+      <table mat-table [dataSource]="subcategorias()" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let s">{{ s.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="categoria">
+          <th mat-header-cell *matHeaderCellDef>Categoria</th>
+          <td mat-cell *matCellDef="let s">{{ nomeCategoria(s.category_id) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Ativa</th>
+          <td mat-cell *matCellDef="let s">
+            <mat-slide-toggle [checked]="s.active" (change)="alternarSubcategoria(s)" />
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let s">
+            <button mat-button (click)="editarSubcategoria(s)">Editar</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name', 'categoria', 'active', 'acoes']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'categoria', 'active', 'acoes']"></tr>
+      </table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Contas financeiras">
+    <div class="tab-content">
+      <form [formGroup]="contaForm" (ngSubmit)="salvarConta()" class="inline-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="bank">Banco</mat-option>
+            <mat-option value="cash">Dinheiro</mat-option>
+            <mat-option value="other">Outro</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Saldo inicial (R$)</mat-label>
+          <input matInput type="number" step="0.01" formControlName="initial_balance" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="contaForm.invalid">
+          {{ editandoContaId() ? 'Salvar edição' : 'Adicionar' }}
+        </button>
+        @if (editandoContaId()) {
+          <button mat-button type="button" (click)="cancelarEdicaoConta()">Cancelar</button>
+        }
+      </form>
+
+      <table mat-table [dataSource]="contas()" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let c">{{ c.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let c">{{ c.type }}</td>
+        </ng-container>
+        <ng-container matColumnDef="saldo">
+          <th mat-header-cell *matHeaderCellDef>Saldo inicial</th>
+          <td mat-cell *matCellDef="let c">{{ c.initial_balance | currency: 'BRL' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Ativa</th>
+          <td mat-cell *matCellDef="let c">
+            <mat-slide-toggle [checked]="c.active" (change)="alternarConta(c)" />
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let c">
+            <button mat-button (click)="editarConta(c)">Editar</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name', 'type', 'saldo', 'active', 'acoes']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'type', 'saldo', 'active', 'acoes']"></tr>
+      </table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Formas de pagamento">
+    <div class="tab-content">
+      <form [formGroup]="formaPagamentoForm" (ngSubmit)="salvarFormaPagamento()" class="inline-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="formaPagamentoForm.invalid">
+          {{ editandoFormaPagamentoId() ? 'Salvar edição' : 'Adicionar' }}
+        </button>
+        @if (editandoFormaPagamentoId()) {
+          <button mat-button type="button" (click)="cancelarEdicaoFormaPagamento()">Cancelar</button>
+        }
+      </form>
+
+      <table mat-table [dataSource]="formasPagamento()" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let f">{{ f.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Ativa</th>
+          <td mat-cell *matCellDef="let f">
+            <mat-slide-toggle [checked]="f.active" (change)="alternarFormaPagamento(f)" />
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let f">
+            <button mat-button (click)="editarFormaPagamento(f)">Editar</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name', 'active', 'acoes']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'active', 'acoes']"></tr>
+      </table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Ciclos">
+    <div class="tab-content">
+      <form [formGroup]="cicloForm" (ngSubmit)="salvarCiclo()" class="inline-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Rótulo</mat-label>
+          <input matInput formControlName="label" placeholder="Ex: Ciclo 18-20/09" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Início</mat-label>
+          <input matInput [matDatepicker]="pickerInicio" formControlName="start_date" />
+          <mat-datepicker-toggle matSuffix [for]="pickerInicio" />
+          <mat-datepicker #pickerInicio />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Fim</mat-label>
+          <input matInput [matDatepicker]="pickerFim" formControlName="end_date" />
+          <mat-datepicker-toggle matSuffix [for]="pickerFim" />
+          <mat-datepicker #pickerFim />
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="cicloForm.invalid">Criar ciclo</button>
+      </form>
+
+      @if (cicloError()) {
+        <p class="error">{{ cicloError() }}</p>
+      }
+
+      <table mat-table [dataSource]="ciclos()" class="full-width">
+        <ng-container matColumnDef="label">
+          <th mat-header-cell *matHeaderCellDef>Ciclo</th>
+          <td mat-cell *matCellDef="let c">{{ c.label }}</td>
+        </ng-container>
+        <ng-container matColumnDef="periodo">
+          <th mat-header-cell *matHeaderCellDef>Período</th>
+          <td mat-cell *matCellDef="let c">{{ c.start_date | date: 'dd/MM' }} — {{ c.end_date | date: 'dd/MM/yyyy' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let c">{{ statusLabel(c.status) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let c">
+            @if (proximoStatus(c.status); as proximo) {
+              <button mat-button (click)="avancarCiclo(c)">Avançar para "{{ statusLabel(proximo) }}"</button>
+            }
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['label', 'periodo', 'status', 'acoes']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['label', 'periodo', 'status', 'acoes']"></tr>
+      </table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Usuários">
+    <div class="tab-content">
+      <table mat-table [dataSource]="usuarios()" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let u">{{ u.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Perfil</th>
+          <td mat-cell *matCellDef="let u">
+            <mat-select
+              [value]="u.role"
+              [disabled]="souEu(u.id)"
+              (selectionChange)="alterarRoleUsuario(u, $event.value)"
+            >
+              <mat-option value="operador">Operador</mat-option>
+              <mat-option value="admin">Admin</mat-option>
+            </mat-select>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Ativo</th>
+          <td mat-cell *matCellDef="let u">
+            <mat-slide-toggle [checked]="u.active" [disabled]="souEu(u.id)" (change)="alternarUsuario(u)" />
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name', 'role', 'active']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'role', 'active']"></tr>
+      </table>
+      <p class="hint">Sua própria conta não pode ser alterada por aqui (evita ficar sem acesso por engano).</p>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+</div>
+</div>

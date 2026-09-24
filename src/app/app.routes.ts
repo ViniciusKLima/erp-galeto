@@ -36,7 +36,7 @@ export const routes: Routes = [
       {
         path: 'configuracoes',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/configuracoes/configuracoes.page').then((m) => m.ConfiguracoesPage),
+        loadComponent: () => import('./features/configuracoes/pages/configuracoes/configuracoes.page').then((m) => m.ConfiguracoesPage),
       },
     ],
   },
