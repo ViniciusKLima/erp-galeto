@@ -23,7 +23,7 @@ export const routes: Routes = [
       },
       {
         path: 'estoque',
-        loadComponent: () => import('./features/estoque/estoque.page').then((m) => m.EstoquePage),
+        loadComponent: () => import('./features/estoque/pages/estoque/estoque.page').then((m) => m.EstoquePage),
       },
       {
         path: 'dividas',
