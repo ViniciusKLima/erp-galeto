@@ -1,19 +1,23 @@
 # Módulo — Movimentações (implementado, referência de padrão)
 
-Módulo mais completo do sistema, reconstruído na etapa 2 do redesign visual (`.claude/reestrutura-visual.md`). Serve de padrão de código para os próximos módulos (mesma estrutura de pastas, mesmo estilo de service/dialog, mesmos componentes compartilhados).
+Módulo mais completo do sistema, reconstruído na etapa 2 do redesign visual (`.claude/reestrutura-visual.md`). Serve de padrão de código para os próximos módulos (mesma estrutura de pastas — `pages/` para telas roteadas, `components/` para dialogs e componentes internos, service na raiz da feature —, mesmo estilo de service/dialog, mesmos componentes compartilhados).
 
 ## Onde está o código
 
 ```
 src/app/features/movimentacoes/
-  movimentacoes.service.ts          — toda comunicação com Supabase (tabelas + RPCs), incluindo transferências
-  movimentacoes-list.page.ts        — tela principal: busca, filtros, tabela, menu de ações por linha, mini-lista de transferências
-  movimentacao-form.dialog.ts       — modal de criação/edição — três tipos num único formulário: receita, despesa ou transferência
-  movimentacao-detail.dialog.ts     — drawer de detalhes (dialog docado à direita) ao clicar numa linha
-  liquidacao-form.dialog.ts         — registrar pagamento/recebimento (total ou parcial)
-  parcelas.dialog.ts                — liquidar parcela individual de uma movimentação parcelada
-  cancelar-movimentacao.dialog.ts   — cancelar com motivo, preservando histórico
+  movimentacoes.service.ts                  — toda comunicação com Supabase (tabelas + RPCs), incluindo transferências
+  pages/
+    movimentacoes-list/                     — tela principal: busca, filtros, tabela, menu de ações por linha, mini-lista de transferências
+  components/
+    movimentacao-form/                      — modal de criação/edição — três tipos num único formulário: receita, despesa ou transferência
+    movimentacao-detail/                    — drawer de detalhes (dialog docado à direita) ao clicar numa linha
+    liquidacao-form/                        — registrar pagamento/recebimento (total ou parcial)
+    parcelas/                               — liquidar parcela individual de uma movimentação parcelada
+    cancelar-movimentacao/                  — cancelar com motivo, preservando histórico
 ```
+
+Cada pasta contém o componente em três arquivos com o mesmo nome base (ex.: `movimentacoes-list.page.ts`/`.html`/`.scss`, `movimentacao-form.dialog.ts`/`.html`/`.scss`).
 
 ## O que funciona
 

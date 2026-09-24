@@ -12,16 +12,31 @@ Complementar `padroes-de-desenvolvimento.md` com convenções específicas do fr
   src/app/
     core/            (auth guard, interceptors, cliente Supabase, tipos gerados)
     shared/          (componentes/pipes/diretivas reutilizáveis, ex.: máscara monetária)
+    layout/
+      shell/         (layout geral: sidenav, barra mobile, router-outlet)
+      sidebar/       (marca, navegação e bloco do usuário, consumido pelo shell)
     features/
-      movimentacoes/
+      auth/          (login)
       dashboard/
-      contas-a-pagar/
-      contas-a-receber/
+      movimentacoes/
+      dividas/       (hub com abas: contas a pagar, contas a receber e credores)
       estoque/
-      dividas-e-credores/
+      relatorios/
       configuracoes/  (categorias, subcategorias, contas financeiras, formas de pagamento, usuários)
   ```
-- Cada feature separa: `pages/` (rotas), `components/` (apresentação), `services/` (acesso a dados/Supabase), `models/` (tipos TS).
+- Dentro de cada feature:
+  - `pages/<nome>/` — telas roteadas (ex.: `movimentacoes/pages/movimentacoes-list/`);
+  - `components/<nome>/` — dialogs e componentes internos da feature, inclusive abas embutidas numa página (ex.: `dividas/components/contas-a-pagar/`);
+  - o service da feature (`<feature>.service.ts`), quando existe, fica na raiz da feature, fora de `pages/` e `components/`.
+  ```
+  features/movimentacoes/
+    movimentacoes.service.ts
+    pages/movimentacoes-list/movimentacoes-list.page.{ts,html,scss}
+    components/movimentacao-form/movimentacao-form.dialog.{ts,html,scss}
+    components/liquidacao-form/liquidacao-form.dialog.{ts,html,scss}
+    ...
+  ```
+- Cada componente tem pasta própria com `.ts`, `.html` e `.scss` separados (`templateUrl`/`styleUrl`, sem template ou estilos inline). Sufixos: `.page.ts` para telas e abas, `.dialog.ts` para dialogs, `.component.ts` em `shared/` e `layout/`.
 
 ## Estado e dados
 
